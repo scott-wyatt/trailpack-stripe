@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Sku
- * @description TODO document Model
+ * @description Sku Stripe Model
  */
 module.exports = class Sku extends Model {
 

@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Invoice
- * @description TODO document Model
+ * @description Invoice Stripe Model
  */
 module.exports = class Invoice extends Model {
 

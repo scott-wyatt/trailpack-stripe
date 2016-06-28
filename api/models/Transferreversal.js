@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Transferreversal
- * @description TODO document Model
+ * @description Transfer Reversal Stripe Model
  */
 module.exports = class Transferreversal extends Model {
 

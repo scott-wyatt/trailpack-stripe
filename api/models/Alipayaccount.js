@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Alipayaccount
- * @description TODO document Model
+ * @description Alipay Account Stripe Model
  */
 module.exports = class Alipayaccount extends Model {
 

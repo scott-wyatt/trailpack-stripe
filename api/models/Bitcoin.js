@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Bitcoin
- * @description TODO document Model
+ * @description Bitcoin Stripe Model
  */
 module.exports = class Bitcoin extends Model {
 

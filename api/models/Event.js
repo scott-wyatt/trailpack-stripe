@@ -4,7 +4,7 @@ const Model = require('trails-model')
 
 /**
  * @module Event
- * @description TODO document Model
+ * @description Event Stripe Model
  */
 module.exports = class Event extends Model {
 
