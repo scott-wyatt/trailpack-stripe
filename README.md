@@ -7,8 +7,19 @@
 
 Stripe API Trailpack for Trails
 
+Handles and validates Stripe Webhooks. 
+Stores Stripe event models.  
+Makes call via Stripe API.
+Supports waterline and sequelize.
+
 ## Install
 
+With yo:
+```sh
+$ yo trails:trailpack trailpack-stripe
+```
+
+With npm:
 ```sh
 $ npm install --save trailpack-stripe
 ```
