@@ -27,10 +27,10 @@ module.exports = {
 
 [npm-image]: https://img.shields.io/npm/v/trailpack-stripe.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/trailpack-stripe
-[ci-image]: https://img.shields.io/travis//trailpack-stripe/master.svg?style=flat-square
-[ci-url]: https://travis-ci.org//trailpack-stripe
-[daviddm-image]: http://img.shields.io/david//trailpack-stripe.svg?style=flat-square
-[daviddm-url]: https://david-dm.org//trailpack-stripe
-[codeclimate-image]: https://img.shields.io/codeclimate/github//trailpack-stripe.svg?style=flat-square
-[codeclimate-url]: https://codeclimate.com/github//trailpack-stripe
+[ci-image]: https://img.shields.io/travis/scott-wyatt/trailpack-stripe/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/scott-wyatt/trailpack-stripe
+[daviddm-image]: http://img.shields.io/david/scott-wyatt/trailpack-stripe.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/scott-wyatt/trailpack-stripe
+[codeclimate-image]: https://img.shields.io/codeclimate/github/scott-wyatt/trailpack-stripe.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/scott-wyatt/trailpack-stripe
 
