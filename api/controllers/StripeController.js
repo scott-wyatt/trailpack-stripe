@@ -15,6 +15,7 @@ module.exports = class StripeController extends Controller{
    * @param {Object} res
    */
   webhook(req, res) {
+
     this.app.services.StripeService.webhook(req, res, (err, event) => {
       if (err) {
         if (err.code === 'E_VALIDATION') {
