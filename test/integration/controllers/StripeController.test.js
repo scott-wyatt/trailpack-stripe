@@ -19,8 +19,8 @@ describe('StripeController', () => {
   it('should reject webhook', (done) => {
     request
       .post('/stripe/webhook')
-      .send({ 'hello': 'world'})
       .set('Accept', 'application/json') //set header for this test
+      .send({ 'hello': 'world'})
       .expect(400)
       .end((err, res) => {
         done(err)
@@ -30,6 +30,7 @@ describe('StripeController', () => {
   it('should accept webhook', (done) => {
     request
       .post('/stripe/webhook')
+      .set('Accept', 'application/json') //set header for this test
       .send({
         'id': 'evt_18RUaM2eZvKYlo2CKP2FmLbV',
         'object': 'event',
@@ -109,7 +110,6 @@ describe('StripeController', () => {
         'request': 'req_8iwTDnIujjw1Hg',
         'type': 'charge.succeeded'
       })
-      .set('Accept', 'application/json') //set header for this test
       .expect(200)
       .end((err, res) => {
         assert.equal(res.body.id, 'evt_18RUaM2eZvKYlo2CKP2FmLbV')

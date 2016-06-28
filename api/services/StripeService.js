@@ -24,12 +24,12 @@ module.exports = class StripeService extends Service {
     const params = req.params
     const eventDate = new Date(params.created * 1000)
 
-    this.app.log.info(params)
+    // this.app.log.error(params)
 
     if (!params.data || !_.isObject(params.data)) {
       const err = new Error('E_VALIDATION')
       err.statusCode = 400
-      err.message = 'Requires a data attribute'
+      err.message = 'Requires a data attribute as an object'
       return next(err)
     }
 
