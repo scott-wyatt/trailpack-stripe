@@ -97,7 +97,7 @@ module.exports = class Sku extends Model {
         inventory: {
           type: 'json' // {type: "finite", quantity: 50, value: null}
         },
-        attributes: {
+        itemAttributes: {
           type: 'json'
         },
         metadata: {
@@ -150,7 +150,7 @@ module.exports = class Sku extends Model {
         inventory: {
           type: Sequelize.JSON // {type: "finite", quantity: 50, value: null}
         },
-        attributes: {
+        itemAttributes: {
           type: Sequelize.JSON
         },
         metadata: {

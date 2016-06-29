@@ -165,10 +165,10 @@ module.exports = class Order extends Model {
           type: Sequelize.STRING //null
         },
         items: {
-          type: Sequelize.ARRAY
+          type: Sequelize.ARRAY(Sequelize.STRING)
         },
         shipping_methods: {
-          type: Sequelize.ARRAY
+          type: Sequelize.ARRAY(Sequelize.STRING)
         },
         selected_shipping_method: {
           type: Sequelize.STRING

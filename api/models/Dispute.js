@@ -148,7 +148,7 @@ module.exports = class Dispute extends Model {
           type: Sequelize.BOOLEAN //false
         },
         balance_transactions: {
-          type: Sequelize.ARRAY //[],
+          type: Sequelize.ARRAY(Sequelize.STRING)
         },
         evidence_details: {
           type: Sequelize.JSON //{}

@@ -172,7 +172,7 @@ module.exports = class Stripeaccount extends Model {
           type: Sequelize.BOOLEAN
         },
         currencies_supported: {
-          type: Sequelize.ARRAY
+          type: Sequelize.ARRAY(Sequelize.STRING)
         },
         default_currency: {
           type: Sequelize.STRING
