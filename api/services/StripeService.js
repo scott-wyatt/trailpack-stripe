@@ -20,7 +20,7 @@ module.exports = class StripeService extends Service {
    * @param next callback function
    */
   webhook(req, res, next) {
-
+    const crud = this.app.services.FootprintService
     const params = req.body
     const eventDate = new Date(params.created * 1000)
 
@@ -41,7 +41,8 @@ module.exports = class StripeService extends Service {
     params.data.object.lastStripeEvent = eventDate
 
     // Try and Find the Event in the DB
-    this.app.services.FootprintService.find('Event', {id: params.id}, { findOne: true })
+    crud.find('Event', {id: params.id}, { findOne: true })
+    //Event.findOne(params.id)
     .then(event => {
       if (event) {
         // Tell handleStripeEvent to ignore this since it already exsits
@@ -50,7 +51,7 @@ module.exports = class StripeService extends Service {
       }
 
       // Create the Event in the DB
-      return this.app.services.FootprintService.create('Event', params)
+      return crud.create('Event', params)
     })
     .then(event => {
 
@@ -61,6 +62,38 @@ module.exports = class StripeService extends Service {
 
   }
 
+  /**
+   * Check if in DB
+   * @param {String} model
+   * @param {Object} stripeObject
+   * @param cb callback function
+   */
+  dbStripeEvent(model, stripeObject, cb){
+    const crud = this.app.services.FootprintService
+
+    crud.find(model, {id: stripeObject.id}, { findOne: true })
+    .then(fModel => {
+      if (!fModel) {
+        return crud.create(model, stripeObject)
+      }
+      else if (fModel.lastStripeEvent > stripeObject.lastStripeEvent){
+        const err = new Error()
+        err.message = stripeObject.id,'is older than',fModel.id
+        return cb(err, fModel)
+      }
+      else {
+        return fModel
+      }
+    })
+    .then(fModel => {
+      return crud.update(model, {id: fModel.id}, fModel)
+    })
+    .then(uModel => {
+      return cb(null, uModel[0])
+    })
+    .catch(cb)
+
+  }
   /**
    * Validate and handle webhook from stripe
    * @param {String} type

@@ -37,7 +37,7 @@ module.exports = class StripeController extends Controller{
         // Handle Stripe Event
         if (!event.ignore) {
 
-          StripeService.handleStripeEvent(event.type, event.data.object, function(err, response){
+          StripeService.handleStripeEvent(event.type, event.data.object, (err, response) => {
             if (err) {
               this.app.log.error(err)
             }

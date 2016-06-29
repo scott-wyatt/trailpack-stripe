@@ -11,7 +11,7 @@ module.exports = class StripeTrailpack extends Trailpack {
    */
   validate () {
     if (!_.includes(_.keys(this.app.packs), 'express')) {
-      return Promise.reject(new Error('This Trailpack work only for express!'))
+      return Promise.reject(new Error('This Trailpack only works for express!'))
     }
 
     if (!this.app.config.stripe) {

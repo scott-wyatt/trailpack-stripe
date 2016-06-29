@@ -256,25 +256,16 @@ module.exports = class Charge extends Model {
 
   // Stripe Webhook charge.succeeded
   stripeChargeSucceeded(charge, cb) {
-
-    Charge.findOrCreate(charge.id, charge)
-      .exec(function (err, foundCharge){
-        if (err) return cb(err)
-        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
-        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
-          return Charge.afterStripeChargeSucceeded(foundCharge, function(err, charge){
-            return cb(err, charge)
-          })
-        }
-        Charge.update(foundCharge.id, charge)
-        .exec(function(err, updatedCharges){
-          if (err) return cb(err)
-          if (!updatedCharges) return cb(null, null)
-          Charge.afterStripeChargeSucceeded(updatedCharges[0], function(err, charge){
-            cb(err, charge)
-          })
-        })
+    const StripeService = this.app.services.StripeService
+    const Charge = this.app.models.Charge
+    StripeService.dbStripeEvent('Charge', charge, (err, uCharge) => {
+      if (err) {
+        return cb(err)
+      }
+      Charge.afterStripeChargeSucceeded(uCharge, function(err, charge){
+        return cb(err, charge)
       })
+    })
   }
 
   afterStripeChargeSucceeded(charge, next){
@@ -284,25 +275,17 @@ module.exports = class Charge extends Model {
 
   // Stripe Webhook charge.failed
   stripeChargeFailed(charge, cb) {
-
-    Charge.findOrCreate(charge.id, charge)
-      .exec(function (err, foundCharge){
-        if (err) return cb(err)
-        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
-        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
-          return Charge.afterStripeChargeFailed(foundCharge, function(err, charge){
-            return cb(err, charge)
-          })
-        }
-        Charge.update(foundCharge.id, charge)
-        .exec(function(err, updatedCharges){
-          if (err) return cb(err)
-          if (!updatedCharges) return cb(null, null)
-          Charge.afterStripeChargeFailed(updatedCharges[0], function(err, charge){
-            cb(err, charge)
-          })
-        })
+    const StripeService = this.app.services.StripeService
+    const Charge = this.app.models.Charge
+    StripeService.dbStripeEvent('Charge', charge, (err, uCharge) => {
+      if (err) {
+        this.app.log.error(err)
+        return cb(err)
+      }
+      Charge.afterStripeChargeFailed(uCharge, function(err, charge){
+        return cb(err, charge)
       })
+    })
   }
 
   afterStripeChargeFailed(charge, next){
@@ -312,25 +295,16 @@ module.exports = class Charge extends Model {
 
   // Stripe Webhook charge.captured
   stripeChargeCaptured(charge, cb) {
-
-    Charge.findOrCreate(charge.id, charge)
-      .exec(function (err, foundCharge){
-        if (err) return cb(err)
-        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
-        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
-          return Charge.afterStripeChargeCaptured(foundCharge, function(err, charge){
-            return cb(err, charge)
-          })
-        }
-        Charge.update(foundCharge.id, charge)
-        .exec(function(err, updatedCharges){
-          if (err) return cb(err)
-          if (!updatedCharges) return cb(null, null)
-          Charge.afterStripeChargeCaptured(updatedCharges[0], function(err, charge){
-            cb(err, charge)
-          })
-        })
+    const StripeService = this.app.services.StripeService
+    const Charge = this.app.models.Charge
+    StripeService.dbStripeEvent('Charge', charge, (err, uCharge) => {
+      if (err) {
+        return cb(err)
+      }
+      Charge.afterStripeChargeCaptured(uCharge, function(err, charge){
+        return cb(err, charge)
       })
+    })
   }
 
   afterStripeChargeCaptured(charge, next){
@@ -340,25 +314,16 @@ module.exports = class Charge extends Model {
 
   // Stripe Webhook charge.updated
   stripeChargeUpdated(charge, cb) {
-
-    Charge.findOrCreate(charge.id, charge)
-      .exec(function (err, foundCharge){
-        if (err) return cb(err)
-        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
-        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
-          return Charge.afterStripeChargeUpdated(foundCharge, function(err, charge){
-            return cb(err, charge)
-          })
-        }
-        Charge.update(foundCharge.id, charge)
-        .exec(function(err, updatedCharges){
-          if (err) return cb(err)
-          if (!updatedCharges) return cb(null, null)
-          Charge.afterStripeChargeUpdated(updatedCharges[0], function(err, charge){
-            cb(err, charge)
-          })
-        })
+    const StripeService = this.app.services.StripeService
+    const Charge = this.app.models.Charge
+    StripeService.dbStripeEvent('Charge', charge, (err, uCharge) => {
+      if (err) {
+        return cb(err)
+      }
+      Charge.afterStripeChargeUpdated(uCharge, function(err, charge){
+        return cb(err, charge)
       })
+    })
   }
 
   afterStripeChargeUpdated(charge, next){
@@ -368,25 +333,16 @@ module.exports = class Charge extends Model {
 
   // Stripe Webhook charge.updated
   stripeChargeRefunded(charge, cb) {
-
-    Charge.findOrCreate(charge.id, charge)
-      .exec(function (err, foundCharge){
-        if (err) return cb(err)
-        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
-        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
-          return Charge.afterStripeChargeRefunded(foundCharge, function(err, charge){
-            return cb(err, charge)
-          })
-        }
-        Charge.update(foundCharge.id, charge)
-        .exec(function(err, updatedCharges){
-          if (err) return cb(err)
-          if (!updatedCharges) return cb(null, null)
-          Charge.afterStripeChargeRefunded(updatedCharges[0], function(err, charge){
-            cb(err, charge)
-          })
-        })
+    const StripeService = this.app.services.StripeService
+    const Charge = this.app.models.Charge
+    StripeService.dbStripeEvent('Charge', charge, (err, uCharge) => {
+      if (err) {
+        return cb(err)
+      }
+      Charge.afterStripeChargeRefunded(uCharge, function(err, charge){
+        return cb(err, charge)
       })
+    })
   }
 
   afterStripeChargeRefunded(charge, next){

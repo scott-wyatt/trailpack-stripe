@@ -66,7 +66,7 @@ const App = {
       handler: 'DefaultController.info'
     }],
     policies: {
-      DefaultController: ['Passport.jwt']
+
     },
     web: {
       express: require('express'),

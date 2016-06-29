@@ -112,6 +112,7 @@ describe('StripeController', () => {
       })
       .expect(200)
       .end((err, res) => {
+        // console.log(res.body)
         assert.equal(res.body.id, 'evt_18RUaM2eZvKYlo2CKP2FmLbV')
         done(err)
       })
