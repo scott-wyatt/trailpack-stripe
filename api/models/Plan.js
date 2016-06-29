@@ -156,4 +156,61 @@ module.exports = class Plan extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook plan.created
+  stripePlanCreated (plan, cb) {
+    const StripeService = this.app.services.StripeService
+    const Plan = this.app.models.Plan
+    StripeService.dbStripeEvent('Plan', plan, (err, uPlan) => {
+      if (err) {
+        return cb(err)
+      }
+      Plan.afterStripePlanCreated(uPlan, function(err, plan){
+        return cb(err, plan)
+      })
+    })
+  }
+
+  afterStripePlanCreated(plan, next){
+    //Do somethings after a plan is created
+    next(null, plan)
+  }
+
+  // Stripe Webhook plan.updated
+  stripePlanUpdated (plan, cb) {
+    const StripeService = this.app.services.StripeService
+    const Plan = this.app.models.Plan
+    StripeService.dbStripeEvent('Plan', plan, (err, uPlan) => {
+      if (err) {
+        return cb(err)
+      }
+      Plan.afterStripePlanUpdated(uPlan, function(err, plan){
+        return cb(err, plan)
+      })
+    })
+  }
+
+  afterStripePlanUpdated(plan, next){
+    //Do somethings after a plan is updated
+    next(null, plan)
+  }
+
+  // Stripe Webhook plan.created
+  stripePlanDeleted (plan, cb) {
+    const crud = this.app.services.FootprintService
+    const Plan = this.app.models.Plan
+
+    crud.destroy('Plan',plan.id)
+    .then(plans => {
+      Plan.afterStripePlanDeleted(plans[0], function(err, plan){
+        return cb(err, plan)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripePlanDeleted(plan, next){
+    //Do somethings after a plan is destroyed
+    next(null, plan)
+  }
 }

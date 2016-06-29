@@ -216,4 +216,104 @@ module.exports = class Transfer extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook transfer.created
+  stripeTransferCreated(transfer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Transfer = this.app.models.Transfer
+    StripeService.dbStripeEvent('Transfer', transfer, (err, uTransfer) => {
+      if (err) {
+        return cb(err)
+      }
+      Transfer.afterStripeTransferCreated(uTransfer,
+        function(err, transfer){
+          return cb(err, transfer)
+        })
+    })
+  }
+
+  afterStripeTransferCreated(transfer, next){
+    //Do something after a transfer is created
+    next(null, transfer)
+  }
+
+  // Stripe Webhook transfer.updated
+  stripeTransferUpdated(transfer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Transfer = this.app.models.Transfer
+    StripeService.dbStripeEvent('Transfer', transfer, (err, uTransfer) => {
+      if (err) {
+        return cb(err)
+      }
+      Transfer.afterStripeTransferUpdated(uTransfer,
+        function(err, transfer){
+          return cb(err, transfer)
+        })
+    })
+  }
+
+  afterStripeTransferUpdated(transfer, next){
+    //Do something after a transfer is updated
+    next(null, transfer)
+  }
+
+  // Stripe Webhook transfer.reversed
+  stripeTransferReversed(transfer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Transfer = this.app.models.Transfer
+    StripeService.dbStripeEvent('Transfer', transfer, (err, uTransfer) => {
+      if (err) {
+        return cb(err)
+      }
+      Transfer.afterStripeTransferReversed(uTransfer,
+        function(err, transfer){
+          return cb(err, transfer)
+        })
+    })
+  }
+
+  afterStripeTransferReversed(transfer, next){
+    //Do something after a transfer is reversed
+    next(null, transfer)
+  }
+
+  // Stripe Webhook transfer.paid
+  stripeTransferPaid(transfer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Transfer = this.app.models.Transfer
+    StripeService.dbStripeEvent('Transfer', transfer, (err, uTransfer) => {
+      if (err) {
+        return cb(err)
+      }
+      Transfer.afterStripeTransferPaid(uTransfer,
+        function(err, transfer){
+          return cb(err, transfer)
+        })
+    })
+  }
+
+  afterStripeTransferPaid(transfer, next){
+    //Do something after a transfer is paid
+    next(null, transfer)
+  }
+
+  // Stripe Webhook transfer.failed
+  stripeTransferFailed(transfer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Transfer = this.app.models.Transfer
+    StripeService.dbStripeEvent('Transfer', transfer, (err, uTransfer) => {
+      if (err) {
+        return cb(err)
+      }
+      Transfer.afterStripeTransferFailed(uTransfer,
+        function(err, transfer){
+          return cb(err, transfer)
+        })
+    })
+  }
+
+  afterStripeTransferFailed(transfer, next){
+    //Do something after a transfer is paid
+    next(null, transfer)
+  }
 }

@@ -133,4 +133,61 @@ module.exports = class Discount extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook customer.discount.created
+  stripeCustomerDiscountCreated (discount, cb) {
+    const StripeService = this.app.services.StripeService
+    const Discount = this.app.models.Discount
+    StripeService.dbStripeEvent('Discount', discount, (err, uDiscount) => {
+      if (err) {
+        return cb(err)
+      }
+      Discount.afterStripeCustomerDiscountCreated(uDiscount, function(err, discount){
+        return cb(err, discount)
+      })
+    })
+  }
+
+  afterStripeCustomerDiscountCreated(discount, next){
+    //Do somethings after a discount is created
+    next(null, discount)
+  }
+
+  // Stripe Webhook customer.discount.updated
+  stripeCustomerDiscountUpdated (discount, cb) {
+    const StripeService = this.app.services.StripeService
+    const Discount = this.app.models.Discount
+    StripeService.dbStripeEvent('Discount', discount, (err, uDiscount) => {
+      if (err) {
+        return cb(err)
+      }
+      Discount.afterStripeCustomerDiscountUpdated(uDiscount, function(err, discount){
+        return cb(err, discount)
+      })
+    })
+  }
+
+  afterStripeCustomerDiscountUpdated(discount, next){
+    //Do somethings after a discount is created
+    next(null, discount)
+  }
+
+  // Stripe Webhook customer.discount.deleted
+  stripeCustomerDiscountDeleted (discount, cb) {
+    const crud = this.app.services.FootprintService
+    const Discount = this.app.models.Discount
+
+    crud.destroy('Discount',discount.id)
+    .then(discounts => {
+      Discount.afterStripeCustomerDiscountDeleted(discounts[0], function(err, discount){
+        return cb(err, discount)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeCustomerDiscountDeleted(discount, next){
+    //Do somethings after a discount is created
+    next(null, discount)
+  }
 }

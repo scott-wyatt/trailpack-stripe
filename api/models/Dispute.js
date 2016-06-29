@@ -168,4 +168,98 @@ module.exports = class Dispute extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook charge.dispute.created
+  stripeChargeDisputeCreated(dispute, cb) {
+    const StripeService = this.app.services.StripeService
+    const Dispute = this.app.models.Dispute
+    StripeService.dbStripeEvent('Dispute', dispute, (err, uDispute) => {
+      if (err) {
+        return cb(err)
+      }
+      Dispute.afterStripeChargeDisputeCreated(uDispute, function(err, dispute){
+        return cb(err, dispute)
+      })
+    })
+  }
+
+  afterStripeChargeDisputeCreated(dispute, next){
+    //Do somethings after a charge dispute is created
+    next(null, dispute)
+  }
+
+  // Stripe Webhook charge.dispute.updated
+  stripeChargeDisputeUpdated(dispute, cb) {
+    const StripeService = this.app.services.StripeService
+    const Dispute = this.app.models.Dispute
+    StripeService.dbStripeEvent('Dispute', dispute, (err, uDispute) => {
+      if (err) {
+        return cb(err)
+      }
+      Dispute.afterStripeChargeDisputeUpdated(uDispute, function(err, dispute){
+        return cb(err, dispute)
+      })
+    })
+  }
+
+  afterStripeChargeDisputeUpdated(dispute, next){
+    //Do somethings after a charge dispute is updated
+    next(null, dispute)
+  }
+
+  // Stripe Webhook charge.dispute.closed
+  stripeChargeDisputeClosed(dispute, cb) {
+    const StripeService = this.app.services.StripeService
+    const Dispute = this.app.models.Dispute
+    StripeService.dbStripeEvent('Dispute', dispute, (err, uDispute) => {
+      if (err) {
+        return cb(err)
+      }
+      Dispute.afterStripeChargeDisputeClosed(uDispute, function(err, dispute){
+        return cb(err, dispute)
+      })
+    })
+  }
+
+  afterStripeChargeDisputeClosed(dispute, next){
+    //Do somethings after a charge dispute is updated
+    next(null, dispute)
+  }
+
+  // Stripe Webhook charge.dispute.funds_withdrawn
+  stripeChargeDisputeFundsWithdrawn(dispute, cb) {
+    const StripeService = this.app.services.StripeService
+    const Dispute = this.app.models.Dispute
+    StripeService.dbStripeEvent('Dispute', dispute, (err, uDispute) => {
+      if (err) {
+        return cb(err)
+      }
+      Dispute.afterStripeChargeDisputeFundsWithdrawn(uDispute, function(err, dispute){
+        return cb(err, dispute)
+      })
+    })
+  }
+
+  afterStripeChargeDisputeFundsWithdrawn(dispute, next){
+    //Do somethings after a charge dispute funds withdrawn
+    next(null, dispute)
+  }
+
+  stripeChargeDisputeFundsReinstated(dispute, cb) {
+    const StripeService = this.app.services.StripeService
+    const Dispute = this.app.models.Dispute
+    StripeService.dbStripeEvent('Dispute', dispute, (err, uDispute) => {
+      if (err) {
+        return cb(err)
+      }
+      Dispute.afterStripeChargeDisputeFundsReinstated(uDispute, function(err, dispute){
+        return cb(err, dispute)
+      })
+    })
+  }
+
+  afterStripeChargeDisputeFundsReinstated(dispute, next){
+    //Do somethings after a charge dispute is reinstated
+    next(null, dispute)
+  }
 }

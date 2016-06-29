@@ -212,4 +212,80 @@ module.exports = class Bitcoin extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook bitcoin.receiver.created
+  stripeBitcoinReceiverCreated(bitcoin, cb) {
+    const StripeService = this.app.services.StripeService
+    const Bitcoin = this.app.models.Bitcoin
+    StripeService.dbStripeEvent('Bitcoin', bitcoin, (err, uBitcoin) => {
+      if (err) {
+        return cb(err)
+      }
+      Bitcoin.afterStripeBitcoinReceiverCreated(uBitcoin, function(err, bitcoin){
+        return cb(err, bitcoin)
+      })
+    })
+  }
+
+  afterStripeBitcoinReceiverCreated(bitcoin, next) {
+    //Add somethings to do after a bitcoin receiver is created
+    next(null, bitcoin)
+  }
+
+  // Stripe Webhook bitcoin.receiver.updated
+  stripeBitcoinReceiverUpdated(bitcoin, cb) {
+    const StripeService = this.app.services.StripeService
+    const Bitcoin = this.app.models.Bitcoin
+    StripeService.dbStripeEvent('Bitcoin', bitcoin, (err, uBitcoin) => {
+      if (err) {
+        return cb(err)
+      }
+      Bitcoin.afterStripeBitcoinReceiverUpdated(uBitcoin, function(err, bitcoin){
+        return cb(err, bitcoin)
+      })
+    })
+  }
+
+  afterStripeBitcoinReceiverUpdated(bitcoin, next) {
+    //Add somethings to do after a bitcoin receiver is created
+    next(null, bitcoin)
+  }
+
+  // Stripe Webhook bitcoin.receiver.filled
+  stripeBitcoinReceiverFilled(bitcoin, cb) {
+    const StripeService = this.app.services.StripeService
+    const Bitcoin = this.app.models.Bitcoin
+    StripeService.dbStripeEvent('Bitcoin', bitcoin, (err, uBitcoin) => {
+      if (err) {
+        return cb(err)
+      }
+      Bitcoin.afterStripeBitcoinReceiverFilled(uBitcoin, function(err, bitcoin){
+        return cb(err, bitcoin)
+      })
+    })
+  }
+
+  afterStripeBitcoinReceiverFilled(bitcoin, next) {
+    //Add somethings to do after a bitcoin receiver is created
+    next(null, bitcoin)
+  }
+
+  // Stripe Webhook bitcoin.receiver.transaction.created
+  stripeBitcoinReceiverTransactionCreated(bitcoin, cb) {
+    const StripeService = this.app.services.StripeService
+    const Bitcoin = this.app.models.Bitcoin
+    StripeService.dbStripeEvent('Bitcoin', bitcoin, (err, uBitcoin) => {
+      if (err) {
+        return cb(err)
+      }
+      Bitcoin.afterStripeBitcoinReceiverTransactionCreated(uBitcoin, function(err, bitcoin){
+        return cb(err, bitcoin)
+      })
+    })
+  }
+
+  afterStripeBitcoinReceiverTransactionCreated(bitcoin, next) {
+    //Add somethings to do after a bitcoin transaction is created
+    next(null, bitcoin)
+  }
 }

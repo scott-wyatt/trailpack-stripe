@@ -175,4 +175,61 @@ module.exports = class Invoiceitem extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook invoiceitem.created
+  stripeInvoiceitemCreated(invoiceitem, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoiceitem = this.app.models.Invoiceitem
+    StripeService.dbStripeEvent('Invoiceitem', invoiceitem, (err, uInvoiceitem) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoiceitem.afterStripeInvoiceitemCreated(uInvoiceitem, function(err, invoiceitem){
+        return cb(err, invoiceitem)
+      })
+    })
+  }
+
+  afterStripeInvoiceitemCreated(invoiceitem, next){
+    //Do somethings after an invoice item is created
+    next(null, invoiceitem)
+  }
+
+  // Stripe Webhook invoiceitem.updated
+  stripeInvoiceitemUpdated(invoiceitem, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoiceitem = this.app.models.Invoiceitem
+    StripeService.dbStripeEvent('Invoiceitem', invoiceitem, (err, uInvoiceitem) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoiceitem.afterStripeInvoiceitemUpdated(uInvoiceitem, function(err, invoiceitem){
+        return cb(err, invoiceitem)
+      })
+    })
+  }
+
+  afterStripeInvoiceitemUpdated(invoiceitem, next){
+    //Do somethings after an invoice item is created
+    next(null, invoiceitem)
+  }
+
+  // Stripe Webhook invoiceitem.deleted
+  stripeInvoiceitemDeleted(invoiceitem, cb) {
+    const crud = this.app.services.FootprintService
+    const Invoiceitem = this.app.models.Invoiceitem
+
+    crud.destroy('Invoiceitem',invoiceitem.id)
+    .then(invoiceitems => {
+      Invoiceitem.afterStripeInvoiceitemDeleted(invoiceitems[0], function(err, invoiceitem){
+        return cb(err, invoiceitem)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeInvoiceitemDeleted(invoiceitem, next){
+    //Do somethings after an invoice item is created
+    next(null, invoiceitem)
+  }
 }

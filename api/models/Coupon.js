@@ -162,4 +162,42 @@ module.exports = class Coupon extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook coupon.created
+  stripeCouponCreated(coupon, cb) {
+    const StripeService = this.app.services.StripeService
+    const Coupon = this.app.models.Coupon
+    StripeService.dbStripeEvent('Coupon', coupon, (err, uCoupon) => {
+      if (err) {
+        return cb(err)
+      }
+      Coupon.afterStripeCouponCreated(uCoupon, function(err, coupon){
+        return cb(err, coupon)
+      })
+    })
+  }
+
+  afterStripeCouponCreated(coupon, next){
+    //Add somethings to do after a coupon is created
+    next(null, coupon)
+  }
+
+  // Stripe Webhook coupon.deleted
+  stripeCouponDeleted(coupon, cb) {
+    const crud = this.app.services.FootprintService
+    const Coupon = this.app.models.Coupon
+
+    crud.destroy('Coupon',coupon.id)
+    .then(coupons => {
+      Coupon.afterStripeCustomerCardDeleted(coupons[0], function(err, coupon){
+        return cb(err, coupon)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeCouponDeleted(coupon, next){
+    //Add somethings to do after a coupon is deleted
+    next(null, coupon)
+  }
 }

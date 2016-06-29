@@ -165,4 +165,61 @@ module.exports = class Customer extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook customer.updated
+  stripeCustomerCreated(customer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Customer = this.app.models.Customer
+    StripeService.dbStripeEvent('Customer', customer, (err, uCustomer) => {
+      if (err) {
+        return cb(err)
+      }
+      Customer.afterStripeCustomerCreated(uCustomer, function(err, customer){
+        return cb(err, customer)
+      })
+    })
+  }
+
+  afterStripeCustomerCreated(customer, next){
+    //Add somethings to do after a customer is created
+    next(null, customer)
+  }
+
+  // Stripe Webhook customer.updated
+  stripeCustomerUpdated(customer, cb) {
+    const StripeService = this.app.services.StripeService
+    const Customer = this.app.models.Customer
+    StripeService.dbStripeEvent('Customer', customer, (err, uCustomer) => {
+      if (err) {
+        return cb(err)
+      }
+      Customer.afterStripeCustomerUpdated(uCustomer, function(err, customer){
+        return cb(err, customer)
+      })
+    })
+  }
+
+  afterStripeCustomerUpdated(customer, next){
+    //Add somethings to do after a customer is updated
+    next(null, customer)
+  }
+
+  // Stripe Webhook customer.deleted
+  stripeCustomerDeleted(customer, cb){
+    const crud = this.app.services.FootprintService
+    const Customer = this.app.models.Customer
+
+    crud.destroy('Customer',customer.id)
+    .then(customers => {
+      Customer.afterStripeCustomerDeleted(customers[0], function(err, customer){
+        return cb(err, customer)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeCustomerDeleted(customer, next){
+    //Add somethings to do after a customer is deleted
+    next(null, customer)
+  }
 }

@@ -231,4 +231,26 @@ module.exports = class Stripeaccount extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook account.updated
+  stripeAccountUpdated (stripeaccount, cb) {
+    const StripeService = this.app.services.StripeService
+    const Stripeaccount = this.app.models.Stripeaccount
+    StripeService.dbStripeEvent('Stripeaccount', stripeaccount, (err, uStripeaccount) => {
+      if (err) {
+        return cb(err)
+      }
+      Stripeaccount.afterStripeStripeaccountCreated(uStripeaccount, function(err, stripeaccount){
+        return cb(err, stripeaccount)
+      })
+    })
+  }
+
+  // Stripe Webhook account.application.deauthorized
+  stripeAccountApplicationDeauthorized(application, cb) {
+
+    //Occurs whenever a user deauthorizes an application. Sent to the related application only.
+    //Custom logic to handle when an application was deauthorized
+    cb(null, application)
+  }
 }

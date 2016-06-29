@@ -23,6 +23,18 @@ module.exports = class Invoice extends Model {
           if (values.created) {
             values.created = new Date(values.created * 1000)
           }
+          if (values.period_start) {
+            values.period_start = new Date(values.period_start * 1000)
+          }
+          if (values.period_end) {
+            values.period_end = new Date(values.period_end * 1000)
+          }
+          if (values.next_payment_attempt) {
+            values.next_payment_attempt = new Date(values.next_payment_attempt * 1000)
+          }
+          if (values.webhooks_delivered_at) {
+            values.webhooks_delivered_at = new Date(values.webhooks_delivered_at * 1000)
+          }
           next()
         }
       }
@@ -35,6 +47,18 @@ module.exports = class Invoice extends Model {
             beforeValidate: (values, options, fn) => {
               if (values.created) {
                 values.created = new Date(values.created * 1000)
+              }
+              if (values.period_start) {
+                values.period_start = new Date(values.period_start * 1000)
+              }
+              if (values.period_end) {
+                values.period_end = new Date(values.period_end * 1000)
+              }
+              if (values.next_payment_attempt) {
+                values.next_payment_attempt = new Date(values.next_payment_attempt * 1000)
+              }
+              if (values.webhooks_delivered_at) {
+                values.webhooks_delivered_at = new Date(values.webhooks_delivered_at * 1000)
               }
               fn()
             }
@@ -285,5 +309,81 @@ module.exports = class Invoice extends Model {
       }
     }
     return schema
+  }
+
+  // Stripe Webhook invoice.created
+  stripeInvoiceCreated(invoice, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoice = this.app.models.Invoice
+    StripeService.dbStripeEvent('Invoice', invoice, (err, uInvoice) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoice.afterStripeInvoiceCreated(uInvoice, function(err, invoice){
+        return cb(err, invoice)
+      })
+    })
+  }
+
+  afterStripeInvoiceCreated(invoice, next){
+    //Do somethings after an invoice is created
+    next(null, invoice)
+  }
+
+  // Stripe Webhook invoice.updated
+  stripeInvoiceUpdated (invoice, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoice = this.app.models.Invoice
+    StripeService.dbStripeEvent('Invoice', invoice, (err, uInvoice) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoice.afterStripeInvoiceUpdated(uInvoice, function(err, invoice){
+        return cb(err, invoice)
+      })
+    })
+  }
+
+  afterStripeInvoiceUpdated(invoice, next){
+    //Do somethings after an invoice is updated
+    next(null, invoice)
+  }
+
+  // Stripe Webhook invoice.payment_succeeded
+  stripeInvoicePaymentSucceeded (invoice, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoice = this.app.models.Invoice
+    StripeService.dbStripeEvent('Invoice', invoice, (err, uInvoice) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoice.afterStripeInvoicePaymentSucceeded(uInvoice, function(err, invoice){
+        return cb(err, invoice)
+      })
+    })
+  }
+
+  afterStripeInvoicePaymentSucceeded(invoice, next){
+    //Do somethings after an invoice payment succeeded
+    next(null, invoice)
+  }
+
+  // Stripe Webhook invoice.payment_failed
+  stripeInvoicePaymentFailed (invoice, cb) {
+    const StripeService = this.app.services.StripeService
+    const Invoice = this.app.models.Invoice
+    StripeService.dbStripeEvent('Invoice', invoice, (err, uInvoice) => {
+      if (err) {
+        return cb(err)
+      }
+      Invoice.afterStripeInvoicePaymentFailed(uInvoice, function(err, invoice){
+        return cb(err, invoice)
+      })
+    })
+  }
+
+  afterStripeInvoicePaymentFailed(invoice, next){
+    //Do somethings after an invoice payment succeeded
+    next(null, invoice)
   }
 }

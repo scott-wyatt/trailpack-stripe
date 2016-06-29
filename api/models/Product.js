@@ -174,4 +174,42 @@ module.exports = class Product extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook product.created
+  stripeProductCreated(product, cb) {
+    const StripeService = this.app.services.StripeService
+    const Product = this.app.models.Product
+    StripeService.dbStripeEvent('Product', product, (err, uProduct) => {
+      if (err) {
+        return cb(err)
+      }
+      Product.afterStripeProductCreated(uProduct, function(err, product){
+        return cb(err, product)
+      })
+    })
+  }
+
+  afterStripeProductCreated(product, next){
+    //Do somethings after an invoice item is created
+    next(null, product)
+  }
+
+  // Stripe Webhook product.updated
+  stripeProductUpdated(product, cb) {
+    const StripeService = this.app.services.StripeService
+    const Product = this.app.models.Product
+    StripeService.dbStripeEvent('Product', product, (err, uProduct) => {
+      if (err) {
+        return cb(err)
+      }
+      Product.afterStripeProductUpdated(uProduct, function(err, product){
+        return cb(err, product)
+      })
+    })
+  }
+
+  afterStripeProductUpdated(product, next){
+    //Do somethings after an invoice item is created
+    next(null, product)
+  }
 }

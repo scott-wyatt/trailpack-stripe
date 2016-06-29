@@ -168,4 +168,43 @@ module.exports = class Applicationfee extends Model {
     }
     return schema
   }
+
+  stripeApplicationFeeCreated (fee, cb) {
+    const StripeService = this.app.services.StripeService
+    const Applicationfee = this.app.models.Applicationfee
+    StripeService.dbStripeEvent('Applicationfee', fee, (err, uFee) => {
+      if (err) {
+        this.app.log.error(err)
+        return cb(err)
+      }
+      Applicationfee.afterStripeApplicationFeeCreated(uFee, function(err, fee){
+        return cb(err, fee)
+      })
+    })
+  }
+
+  afterStripeApplicationFeeCreated(fee, next){
+    //Do somethings after application fee is created
+    next(null, fee)
+  }
+
+  // Stripe Webhook application_fee.refunded
+  stripeApplicationFeeRefunded(fee, cb) {
+    const StripeService = this.app.services.StripeService
+    const Applicationfee = this.app.models.Applicationfee
+    StripeService.dbStripeEvent('Applicationfee', fee, (err, uFee) => {
+      if (err) {
+        this.app.log.error(err)
+        return cb(err)
+      }
+      Applicationfee.afterStripeApplicationFeeRefunded(uFee, function(err, fee){
+        return cb(err, fee)
+      })
+    })
+  }
+
+  afterStripeApplicationFeeRefunded(fee, next){
+    //Do somethings after application fee is created
+    next(null, fee)
+  }
 }

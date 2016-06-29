@@ -168,4 +168,42 @@ module.exports = class Sku extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook sku.created
+  stripeSkuCreated(sku, cb) {
+    const StripeService = this.app.services.StripeService
+    const Sku = this.app.models.Sku
+    StripeService.dbStripeEvent('Sku', sku, (err, uSku) => {
+      if (err) {
+        return cb(err)
+      }
+      Sku.afterStripeSkuCreated(uSku, function(err, sku){
+        return cb(err, sku)
+      })
+    })
+  }
+
+  afterStripeSkuCreated(sku, next){
+    //Do somethings after a sku is created
+    next(null, sku)
+  }
+
+  // Stripe Webhook sku.updated
+  stripeSkuUpdated(sku, cb) {
+    const StripeService = this.app.services.StripeService
+    const Sku = this.app.models.Sku
+    StripeService.dbStripeEvent('Sku', sku, (err, uSku) => {
+      if (err) {
+        return cb(err)
+      }
+      Sku.afterStripeSkuUpdated(uSku, function(err, sku){
+        return cb(err, sku)
+      })
+    })
+  }
+
+  afterStripeSkuUpdated(sku, next){
+    //Do somethings after a sku is updated
+    next(null, sku)
+  }
 }

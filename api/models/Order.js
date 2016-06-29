@@ -193,4 +193,80 @@ module.exports = class Order extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook order.created
+  stripeOrderCreated(order, cb) {
+    const StripeService = this.app.services.StripeService
+    const Order = this.app.models.Order
+    StripeService.dbStripeEvent('Order', order, (err, uOrder) => {
+      if (err) {
+        return cb(err)
+      }
+      Order.afterStripeOrderCreated(uOrder, function(err, order){
+        return cb(err, order)
+      })
+    })
+  }
+
+  afterStripeOrderCreated(order, next){
+    //Do somethings after an invoice item is created
+    next(null, order)
+  }
+
+  // Stripe Webhook order.updated
+  stripeOrderUpdated(order, cb) {
+    const StripeService = this.app.services.StripeService
+    const Order = this.app.models.Order
+    StripeService.dbStripeEvent('Order', order, (err, uOrder) => {
+      if (err) {
+        return cb(err)
+      }
+      Order.afterStripeOrderUpdated(uOrder, function(err, order){
+        return cb(err, order)
+      })
+    })
+  }
+
+  afterStripeOrderUpdated(order, next){
+    //Do somethings after an invoice item is created
+    next(null, order)
+  }
+
+  // Stripe Webhook order.payment_succeeded
+  stripeOrderPaymentSucceeded(order, cb) {
+    const StripeService = this.app.services.StripeService
+    const Order = this.app.models.Order
+    StripeService.dbStripeEvent('Order', order, (err, uOrder) => {
+      if (err) {
+        return cb(err)
+      }
+      Order.afterStripeOrderPaymentSucceeded(uOrder, function(err, order){
+        return cb(err, order)
+      })
+    })
+  }
+
+  afterStripeOrderPaymentSucceeded(order, next){
+    //Do somethings after an order payment succeeded
+    next(null, order)
+  }
+
+  // Stripe Webhook order.payment_failed
+  stripeOrderPaymentFailed(order, cb) {
+    const StripeService = this.app.services.StripeService
+    const Order = this.app.models.Order
+    StripeService.dbStripeEvent('Order', order, (err, uOrder) => {
+      if (err) {
+        return cb(err)
+      }
+      Order.afterStripeOrderPaymentFailed(uOrder, function(err, order){
+        return cb(err, order)
+      })
+    })
+  }
+
+  afterStripeOrderPaymentFailed(order, next){
+    //Do somethings after an order payment succeeded
+    next(null, order)
+  }
 }

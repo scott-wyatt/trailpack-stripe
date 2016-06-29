@@ -23,6 +23,24 @@ module.exports = class Subscription extends Model {
           if (values.created) {
             values.created = new Date(values.created * 1000)
           }
+          if (values.current_period_start) {
+            values.current_period_start = new Date(values.current_period_start * 1000)
+          }
+          if (values.current_period_end) {
+            values.current_period_end = new Date(values.current_period_end * 1000)
+          }
+          if (values.ended_at) {
+            values.ended_at = new Date(values.ended_at * 1000)
+          }
+          if (values.trial_start) {
+            values.trial_start = new Date(values.trial_start * 1000)
+          }
+          if (values.trial_end) {
+            values.trial_end = new Date(values.trial_end * 1000)
+          }
+          if (values.canceled_at) {
+            values.canceled_at = new Date(values.canceled_at * 1000)
+          }
           next()
         }
       }
@@ -35,6 +53,24 @@ module.exports = class Subscription extends Model {
             beforeValidate: (values, options, fn) => {
               if (values.created) {
                 values.created = new Date(values.created * 1000)
+              }
+              if (values.current_period_start) {
+                values.current_period_start = new Date(values.current_period_start * 1000)
+              }
+              if (values.current_period_end) {
+                values.current_period_end = new Date(values.current_period_end * 1000)
+              }
+              if (values.ended_at) {
+                values.ended_at = new Date(values.ended_at * 1000)
+              }
+              if (values.trial_start) {
+                values.trial_start = new Date(values.trial_start * 1000)
+              }
+              if (values.trial_end) {
+                values.trial_end = new Date(values.trial_end * 1000)
+              }
+              if (values.canceled_at) {
+                values.canceled_at = new Date(values.canceled_at * 1000)
               }
               fn()
             }
@@ -191,5 +227,85 @@ module.exports = class Subscription extends Model {
       }
     }
     return schema
+  }
+
+  // Stripe Webhook customer.subscription.created
+  stripeCustomerSubscriptionCreated(subscription, cb) {
+    const StripeService = this.app.services.StripeService
+    const Subscription = this.app.models.Subscription
+    StripeService.dbStripeEvent('Subscription', subscription, (err, uSubscription) => {
+      if (err) {
+        return cb(err)
+      }
+      Subscription.afterStripeCustomerSubscriptionCreated(uSubscription,
+        function(err, subscription){
+          return cb(err, subscription)
+        })
+    })
+  }
+
+  afterStripeCustomerSubscriptionCreated(subscription, next){
+    //Do something after subscription is created
+    next(null, subscription)
+  }
+
+  // Stripe Webhook customer.subscription.updated
+  stripeCustomerSubscriptionUpdated (subscription, cb) {
+    const StripeService = this.app.services.StripeService
+    const Subscription = this.app.models.Subscription
+    StripeService.dbStripeEvent('Subscription', subscription, (err, uSubscription) => {
+      if (err) {
+        return cb(err)
+      }
+      Subscription.afterStripeCustomerSubscriptionUpdated(uSubscription,
+        function(err, subscription){
+          return cb(err, subscription)
+        })
+    })
+  }
+
+  afterStripeCustomerSubscriptionUpdated(subscription, next){
+    //Do something after subscription is updated
+    next(null, subscription)
+  }
+
+  // Stripe Webhook customer.subscription.deleted
+  stripeCustomerSubscriptionDeleted (subscription, cb) {
+    const crud = this.app.services.FootprintService
+    const Subscription = this.app.models.Subscription
+
+    crud.destroy('Subscription',subscription.id)
+    .then(subscriptions => {
+      Subscription.afterStripeSubscriptionDeleted(subscriptions[0], function(err, subscription){
+        return cb(err, subscription)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeCustomerSubscriptionDeleted(subscription, next){
+    //Do something after subscription is destroyed
+    next(null, subscription)
+  }
+
+  // Stripe Webhook customer.subscription.trial_will_end
+  stripeCustomerSubscriptionTrial (subscription, cb) {
+    //Occurs three days before the trial period of a subscription is scheduled to end.
+    //Custom logic to handle that: add an email or notification or something.
+    const StripeService = this.app.services.StripeService
+    const Subscription = this.app.models.Subscription
+    StripeService.dbStripeEvent('Subscription', subscription, (err, uSubscription) => {
+      if (err) {
+        return cb(err)
+      }
+      Subscription.afterStripeCustomerSubscriptionTrial(uSubscription, function(err, subscription){
+        return cb(err, subscription)
+      })
+    })
+  }
+
+  afterStripeCustomerSubscriptionTrial(subscription, next){
+    //Do something after subscription trail wanring
+    next(null, subscription)
   }
 }

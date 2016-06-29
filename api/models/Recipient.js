@@ -171,4 +171,61 @@ module.exports = class Recipient extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook recipient.created
+  stripeRecipientCreated(recipient, cb) {
+    const StripeService = this.app.services.StripeService
+    const Recipient = this.app.models.Recipient
+    StripeService.dbStripeEvent('Recipient', recipient, (err, uRecipient) => {
+      if (err) {
+        return cb(err)
+      }
+      Recipient.afterStripeRecipientCreated(uRecipient, function(err, recipient){
+        return cb(err, recipient)
+      })
+    })
+  }
+
+  afterStripeRecipientCreated(recipient, next){
+    //Do somethings after recipient created
+    next(null, recipient)
+  }
+
+  // Stripe Webhook recipient.updated
+  stripeRecipientUpdated(recipient, cb) {
+    const StripeService = this.app.services.StripeService
+    const Recipient = this.app.models.Recipient
+    StripeService.dbStripeEvent('Recipient', recipient, (err, uRecipient) => {
+      if (err) {
+        return cb(err)
+      }
+      Recipient.afterStripeRecipientUpdated(uRecipient, function(err, recipient){
+        return cb(err, recipient)
+      })
+    })
+  }
+
+  afterStripeRecipientUpdated(recipient, next){
+    //Do somethings after recipient updated
+    next(null, recipient)
+  }
+
+  // Stripe Webhook recipient.deleted
+  stripeRecipientDeleted(recipient, cb) {
+    const crud = this.app.services.FootprintService
+    const Recipient = this.app.models.Recipient
+
+    crud.destroy('Recipient',recipient.id)
+    .then(recipients => {
+      Recipient.afterStripeRecipientDeleted(recipients[0], function(err, recipient){
+        return cb(err, recipient)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeRecipientDeleted (recipient, next){
+    //Do somethings after recipient deleted
+    next(null, recipient)
+  }
 }

@@ -209,4 +209,61 @@ module.exports = class Card extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook customer.card.created
+  stripeCustomerCardCreated(card, cb) {
+    const StripeService = this.app.services.StripeService
+    const Card = this.app.models.Card
+    StripeService.dbStripeEvent('Card', card, (err, uCard) => {
+      if (err) {
+        return cb(err)
+      }
+      Card.afterStripeCustomerCardCreated(uCard, function(err, card){
+        return cb(err, card)
+      })
+    })
+  }
+
+  afterStripeCustomerCardCreated(card, next) {
+    //Add somethings to do after a card is created
+    next(null, card)
+  }
+
+  // Stripe Webhook customer.card.updated
+  stripeCustomerCardUpdated(card, cb) {
+    const StripeService = this.app.services.StripeService
+    const Card = this.app.models.Card
+    StripeService.dbStripeEvent('Card', card, (err, uCard) => {
+      if (err) {
+        return cb(err)
+      }
+      Card.afterStripeCustomerCardUpdated(uCard, function(err, card){
+        return cb(err, card)
+      })
+    })
+  }
+
+  afterStripeCustomerCardUpdated(card, next){
+    //Add somethings to do after a card is updated
+    next(null, card)
+  }
+
+  // Stripe Webhook customer.card.deleted
+  stripeCustomerCardDeleted(card, cb) {
+    const crud = this.app.services.FootprintService
+    const Card = this.app.models.Card
+
+    crud.destroy('Card',card.id)
+    .then(cards => {
+      Card.afterStripeCustomerCardDeleted(cards[0], function(err, card){
+        return cb(err, card)
+      })
+    })
+    .catch(cb)
+  }
+
+  afterStripeCustomerCardDeleted(card, next){
+    //Add somethings to do after a card is deleted
+    next(null, card)
+  }
 }
