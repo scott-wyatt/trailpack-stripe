@@ -43,21 +43,21 @@ module.exports = class Invoiceitem extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Invoiceitem.hasOne(models.Invoice, {
-                as: 'invoice',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Invoiceitem.belongsTo(models.Invoice, {
+              //   as: 'invoice',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   }
+              // })
 
-              models.Invoiceitem.hasOne(models.Subscription, {
-                as: 'subscription',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Invoiceitem.belongsTo(models.Subscription, {
+              //   as: 'subscription',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   }
+              // })
             }
           }
         }
@@ -122,6 +122,38 @@ module.exports = class Invoiceitem extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING,
@@ -146,26 +178,26 @@ module.exports = class Invoiceitem extends Model {
         proration: {
           type: Sequelize.BOOLEAN //true
         },
-        period: {
-          type: Sequelize.JSON // {"start": 1422575156, "end": 1422575156}
+        period: sJSON('period'),
+
+        // invoice Model belongsTo
+        invoice: {
+          type: Sequelize.STRING //null
         },
 
-        // invoice Model hasOne
-
-        // subscription Model hasOne
+        // subscription Model belongsTo
+        subscription: {
+          type: Sequelize.STRING //null
+        },
 
         quantity: {
           type: Sequelize.INTEGER //1
         },
-        plan: {
-          type: Sequelize.JSON // {"interval": "week","name": "Bar","created": 1422575143,"amount": 100000,"currency": "usd","id": "18966bar1422575142","object": "plan","livemode": false,"interval_count": 1,"trial_period_days": null,metadata: {},"statement_descriptor": null}
-        },
+        plan: sJSON('plan'),
         description: {
           type: Sequelize.STRING //"Remaining time on Bar after 29 Jan 2015"
         },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        metadata: sJSON('metadata'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

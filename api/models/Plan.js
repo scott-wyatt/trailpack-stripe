@@ -105,6 +105,38 @@ module.exports = class Plan extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING,
@@ -141,9 +173,7 @@ module.exports = class Plan extends Model {
         trial_period_days: {
           type: Sequelize.INTEGER
         },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        metadata: sJSON('metadata'),
         statement_descriptor: {
           type: Sequelize.STRING
         },

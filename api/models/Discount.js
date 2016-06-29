@@ -43,21 +43,21 @@ module.exports = class Discount extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Discount.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Discount.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
 
-              models.Discount.hasOne(models.Subscription, {
-                as: 'subscription',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Discount.belongsTo(models.Subscription, {
+              //   as: 'subscription',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -101,15 +101,45 @@ module.exports = class Discount extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"Trial"
           primaryKey: true,
           unique: true
         },
-        coupon: {
-          type: Sequelize.JSON //josn
-        },
+        coupon: sJSON('coupons'),
         start: {
           type: Sequelize.DATE //1390790362
         },
@@ -117,9 +147,15 @@ module.exports = class Discount extends Model {
           type: Sequelize.STRING //"discount"
         },
 
-        // customer Model hasOne
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
-        // subscription Model hasOne
+        // subscription Model belongsTo
+        subscription: {
+          type: Sequelize.STRING //null
+        },
 
         end: {
           type: Sequelize.DATE //null

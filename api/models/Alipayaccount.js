@@ -96,6 +96,7 @@ module.exports = class Alipayaccount extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
       schema = {
         id: {
           type: Sequelize.STRING, //"aliacc_16q4o6Bw8aZ7QiYmdCfHA1U9"

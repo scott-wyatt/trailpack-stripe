@@ -43,13 +43,13 @@ module.exports = class Transferreversal extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Transferreversal.hasOne(models.Transfer, {
-                as: 'transfer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Transferreversal.belongsTo(models.Transfer, {
+              //   as: 'transfer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -96,6 +96,38 @@ module.exports = class Transferreversal extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"trr_xxxxxxxxxxxx"
@@ -117,11 +149,12 @@ module.exports = class Transferreversal extends Model {
         balance_transaction: {
           type: Sequelize.STRING //null
         },
-        metadata: {
-          type: Sequelize.JSON // {}
-        },
+        metadata: sJSON('metadata'),
 
-        //transfer Model hasOne
+        //transfer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

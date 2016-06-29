@@ -108,6 +108,38 @@ module.exports = class Coupon extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"Trial"
@@ -150,9 +182,7 @@ module.exports = class Coupon extends Model {
         valid: {
           type: Sequelize.BOOLEAN //true
         },
-        metadata: {
-          type: Sequelize.JSON //{}
-        },
+        metadata: sJSON('metadata'), //{}
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

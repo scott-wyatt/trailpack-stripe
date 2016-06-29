@@ -36,6 +36,10 @@ module.exports = class Sku extends Model {
               if (values.created) {
                 values.created = new Date(values.created * 1000)
               }
+              if (values.attributes) {
+                values.itemAttributes = values.attributes
+                delete values.attributes
+              }
               fn()
             }
           },
@@ -43,14 +47,17 @@ module.exports = class Sku extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Sku.hasOne(models.Product, {
-                as: 'product',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Sku.belongsTo(models.Product, {
+              //   as: 'product',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
+          },
+          get: () => {
+            this.attributes = this.itemAttributes
           }
         }
       }
@@ -97,7 +104,7 @@ module.exports = class Sku extends Model {
         inventory: {
           type: 'json' // {type: "finite", quantity: 50, value: null}
         },
-        itemAttributes: {
+        attributes: {
           type: 'json'
         },
         metadata: {
@@ -114,6 +121,38 @@ module.exports = class Sku extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"sku_74DEICYJxo7XQF"
@@ -133,7 +172,10 @@ module.exports = class Sku extends Model {
           type: Sequelize.BOOLEAN //false
         },
 
-        // product Model hasOne
+        // product Model belongsTo
+        product: {
+          type: Sequelize.STRING //null
+        },
 
         image: {
           type: Sequelize.STRING //null
@@ -147,18 +189,10 @@ module.exports = class Sku extends Model {
         currency: {
           type: Sequelize.STRING //"usd"
         },
-        inventory: {
-          type: Sequelize.JSON // {type: "finite", quantity: 50, value: null}
-        },
-        itemAttributes: {
-          type: Sequelize.JSON
-        },
-        metadata: {
-          type: Sequelize.JSON
-        },
-        package_dimensions: {
-          type: Sequelize.JSON
-        },
+        inventory: sJSON('inventory'),
+        itemAttributes: sJSON('itemAttributes'),
+        metadata: sJSON('metadata'),
+        package_dimensions: sJSON('package_dimensions'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

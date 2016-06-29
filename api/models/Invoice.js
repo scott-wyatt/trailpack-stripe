@@ -67,29 +67,29 @@ module.exports = class Invoice extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Invoice.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Invoice.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
 
-              models.Invoice.hasOne(models.Charge, {
-                as: 'charge',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Invoice.hasOne(models.Charge, {
+              //   as: 'charge',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   }
+              // })
 
-              models.Invoice.hasOne(models.Subscription, {
-                as: 'subscription',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Invoice.belongsTo(models.Subscription, {
+              //   as: 'subscription',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   }
+              // })
             }
           }
         }
@@ -205,6 +205,38 @@ module.exports = class Invoice extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"in_5OfJeYHbLtvBJ7"
@@ -220,9 +252,7 @@ module.exports = class Invoice extends Model {
         period_end: {
           type: Sequelize.DATE //1419576752,
         },
-        lines: {
-          type: Sequelize.JSON
-        },
+        lines: sJSON('lines'),
         subtotal: {
           type: Sequelize.INTEGER //29995,
         },
@@ -230,7 +260,10 @@ module.exports = class Invoice extends Model {
           type: Sequelize.INTEGER //29995,
         },
 
-        // customer Model hasOne
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
         object: {
           type: Sequelize.STRING // "invoice",
@@ -273,15 +306,19 @@ module.exports = class Invoice extends Model {
         },
 
         // charge Model hasOne
-
-        discount: {
-          type: Sequelize.JSON
+        charge: {
+          type: Sequelize.STRING
         },
+
+        discount: sJSON('discount'),
         application_fee: {
           type: Sequelize.INTEGER //null
         },
 
-        // subscription Model hasOne
+        // subscription Model belongsTo
+        subscription: {
+          type: Sequelize.STRING //null
+        },
 
         tax: {
           type: Sequelize.INTEGER //null,
@@ -289,9 +326,7 @@ module.exports = class Invoice extends Model {
         tax_percent: {
           type: Sequelize.FLOAT //null
         },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        metadata: sJSON('metadata'),
         statement_descriptor: {
           type: Sequelize.STRING
         },

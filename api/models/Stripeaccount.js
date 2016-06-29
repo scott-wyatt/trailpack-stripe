@@ -141,7 +141,54 @@ module.exports = class Stripeaccount extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
-      const arrayType = Sequelize.ARRAY
+
+      const database = app.config.database
+
+      let sARRAY = () => {
+        return {
+          type: Sequelize.STRING
+        }
+      }
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+          sARRAY = () => {
+            return {
+              type: Sequelize.ARRAY
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+        sARRAY = () => {
+          return {
+            type: Sequelize.ARRAY
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"acct_xxxxxxxxxxxxxxx",
@@ -172,9 +219,7 @@ module.exports = class Stripeaccount extends Model {
         transfers_enabled: {
           type: Sequelize.BOOLEAN
         },
-        currencies_supported: {
-          type: arrayType(Sequelize.STRING)
-        },
+        currencies_supported: sARRAY(),
         default_currency: {
           type: Sequelize.STRING
         },
@@ -205,24 +250,12 @@ module.exports = class Stripeaccount extends Model {
         debit_negative_balances: {
           type: Sequelize.BOOLEAN
         },
-        bank_accounts: {
-          type: Sequelize.JSON
-        },
-        verification: {
-          type: Sequelize.JSON
-        },
-        transfer_schedule: {
-          type: Sequelize.JSON
-        },
-        tos_acceptance: {
-          type: Sequelize.JSON
-        },
-        legal_entity: {
-          type: Sequelize.JSON
-        },
-        decline_charge_on: {
-          type: Sequelize.JSON
-        },
+        bank_accounts: sJSON('bank_accounts'),
+        verification: sJSON('verification'),
+        transfer_schedule: sJSON('transfer_schedule'),
+        tos_acceptance: sJSON('tos_acceptance'),
+        legal_entity: sJSON('legal_entity'),
+        decline_charge_on: sJSON('decline_charge_on'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

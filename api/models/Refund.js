@@ -43,13 +43,13 @@ module.exports = class Refund extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Refund.hasOne(models.Charge, {
-                as: 'charge',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Refund.belongsTo(models.Charge, {
+              //   as: 'charge',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -102,6 +102,38 @@ module.exports = class Refund extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"re_3IH1NqUxYmyx2n"
@@ -123,11 +155,12 @@ module.exports = class Refund extends Model {
         balance_transaction: {
           type: Sequelize.STRING //"txn_3IH1XgiGk6NelI"
         },
-        metadata: {
-          type: Sequelize.JSON //{}
-        },
+        metadata: sJSON('metadata'),
 
-        //charge Model hasOne
+        //charge Model belongsTo
+        charge: {
+          type: Sequelize.STRING //null
+        },
 
         receipt_number: {
           type: Sequelize.STRING //null

@@ -43,13 +43,13 @@ module.exports = class Bitcoin extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Bitcoin.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Bitcoin.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -135,6 +135,38 @@ module.exports = class Bitcoin extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"btcrcv_5zu4MpDCIGkHcC",
@@ -189,20 +221,19 @@ module.exports = class Bitcoin extends Model {
             isEmail: true
           }
         },
-        metadata: {
-          type: Sequelize.JSON //{}
-        },
+        metadata: sJSON('metadata'), //{}
         refund_address: {
           type: Sequelize.BOOLEAN //false
         },
-        transactions: {
-          type: Sequelize.JSON
-        },
+        transactions: sJSON('transactions'),
         payment: {
           type: Sequelize.STRING //null
         },
 
-        // customer Model hasOne
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

@@ -43,13 +43,14 @@ module.exports = class Applicationfee extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Applicationfee.hasOne(models.Charge, {
-                as: 'charge',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Applicationfee.belongsTo(models.Charge, {
+              //   as: 'charge',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false,
+              //     targetKey: 'charge'
+              //   }
+              // })
             }
           }
         }
@@ -114,6 +115,38 @@ module.exports = class Applicationfee extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"fee_5zu43QOh0tbSiC"
@@ -141,9 +174,7 @@ module.exports = class Applicationfee extends Model {
         amount_refunded: {
           type: Sequelize.INTEGER //0
         },
-        refunds: {
-          type: Sequelize.JSON //{}
-        },
+        refunds: sJSON('refunds'), //{}
         balance_transaction: {
           type: Sequelize.STRING //"txn_2v2VcOoVgfuxzP"
         },
@@ -154,7 +185,10 @@ module.exports = class Applicationfee extends Model {
           type: Sequelize.STRING //"ca_5zu4wDltE3SnpyqIFnPbp7IRPkv6c76z"
         },
 
-        // Charge Model hasOne
+        // charge Model belongsTo
+        charge: {
+          type: Sequelize.STRING //null
+        },
 
         originating_transaction: {
           type: Sequelize.STRING //null

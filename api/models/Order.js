@@ -43,21 +43,21 @@ module.exports = class Order extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Order.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Order.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
 
-              models.Order.hasOne(models.Charge, {
-                as: 'charge',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Order.belongsTo(models.Charge, {
+              //   as: 'charge',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   }
+              // })
             }
           }
         }
@@ -131,7 +131,54 @@ module.exports = class Order extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
-      const arrayType = Sequelize.ARRAY
+
+      const database = app.config.database
+
+      let sARRAY = () => {
+        return {
+          type: Sequelize.STRING
+        }
+      }
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+          sARRAY = () => {
+            return {
+              type: Sequelize.ARRAY
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+        sARRAY = () => {
+          return {
+            type: Sequelize.ARRAY
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
@@ -153,24 +200,19 @@ module.exports = class Order extends Model {
         status: {
           type: Sequelize.STRING //"created"
         },
-        metadata: {
-          type: Sequelize.JSON
+        metadata: sJSON('metadata'),
+
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
         },
 
-        // customer Model hasOne
-
-        shipping: {
-          type: Sequelize.JSON
-        },
+        shipping: sJSON('shipping'),
         email: {
           type: Sequelize.STRING //null
         },
-        items: {
-          type: arrayType(Sequelize.STRING)
-        },
-        shipping_methods: {
-          type: arrayType(Sequelize.STRING)
-        },
+        items: sARRAY(),
+        shipping_methods: sARRAY(),
         selected_shipping_method: {
           type: Sequelize.STRING
         },
@@ -184,7 +226,10 @@ module.exports = class Order extends Model {
           type: Sequelize.INTEGER //null
         },
 
-        // charge Model hasOne
+        // charge Model belongsTo
+        charge: {
+          type: Sequelize.STRING //null
+        },
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

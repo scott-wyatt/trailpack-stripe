@@ -135,6 +135,38 @@ module.exports = class Transfer extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"tr_xxxxxxxxxxxx"
@@ -168,15 +200,11 @@ module.exports = class Transfer extends Model {
         type: {
           type: Sequelize.STRING //"bank_account"
         },
-        reversals: {
-          type: Sequelize.JSON //{"object": "list","total_count": 0,"has_more": false,"url": "/v1/transfers/tr_3biGAn1hq8iKfo/reversals","data": []},
-        },
+        reversals: sJSON('reversals'),
         balance_transaction: {
           type: Sequelize.STRING //"txn_2v2VcOoVgfuxzP"
         },
-        bank_account: {
-          type: Sequelize.JSON //{"object": "bank_account","id": "ba_0LK9sazX8tPl54","last4": "3532","country": "US","currency": "usd","status": "new","fingerprint": "AMyAAyMWZEg1LDfU","routing_number": "322271627","bank_name": "J.P. MORGAN CHASE BANK, N.A.","default_for_currency": true},
-        },
+        bank_account: sJSON('bank_account'),
         destination: {
           type: Sequelize.STRING //"ba_0LK9sazX8tPl54"
         },
@@ -192,9 +220,7 @@ module.exports = class Transfer extends Model {
         amount_reversed: {
           type: Sequelize.INTEGER //0
         },
-        metadata: {
-          type: Sequelize.JSON //{}
-        },
+        metadata: sJSON('metadata'),
         statement_descriptor: {
           type: Sequelize.STRING //null
         },

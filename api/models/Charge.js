@@ -43,21 +43,23 @@ module.exports = class Charge extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Charge.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Charge.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   },
+              //   targetKey: 'id'
+              // })
 
-              models.Charge.hasOne(models.Invoice, {
-                as: 'invoice',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: true
-                }
-              })
+              // models.Charge.belongsTo(models.Invoice, {
+              //   as: 'invoice',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: true
+              //   },
+              //   targetKey: 'id'
+              // })
             }
           }
         }
@@ -161,6 +163,38 @@ module.exports = class Charge extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING,
@@ -191,9 +225,7 @@ module.exports = class Charge extends Model {
         refunded: {
           type: Sequelize.BOOLEAN //false
         },
-        source: {
-          type: Sequelize.JSON //{}
-        },
+        source: sJSON('source'),//{}
         captured: {
           type: Sequelize.BOOLEAN //true
         },
@@ -210,9 +242,15 @@ module.exports = class Charge extends Model {
           type: Sequelize.INTEGER //0
         },
 
-        // customer Model hasOne
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
-        // invoice Model hasOne
+        // invoice Model belongsTo
+        invoice: {
+          type: Sequelize.STRING //null
+        },
 
         description: {
           type: Sequelize.STRING //"Charge for funds transfer to customer=%cus_5asUj0MST5mHUt",
@@ -220,9 +258,7 @@ module.exports = class Charge extends Model {
         dispute: {
           type: Sequelize.STRING //null
         },
-        metadata: {
-          type: Sequelize.JSON // {"customerFrom": "54a5977904a91e011336bb63","customerTo": "54c800d280fc70e38a7469e1"},
-        },
+        metadata: sJSON('metadata'), // {"customerFrom": "54a5977904a91e011336bb63","customerTo": "54c800d280fc70e38a7469e1"},
         statement_descriptor: {
           type: Sequelize.STRING //null
         },
@@ -241,9 +277,7 @@ module.exports = class Charge extends Model {
         application_fee: {
           type: Sequelize.STRING //null
         },
-        refunds: {
-          type: Sequelize.JSON //{ object": "list", "total_count": 0, "has_more": false, "url": "/v1/charges/ch_5mXfl1ok3CV6xn/refunds", "data": []}
-        },
+        refunds: sJSON('refunds'), //{ object": "list", "total_count": 0, "has_more": false, "url": "/v1/charges/ch_5mXfl1ok3CV6xn/refunds", "data": []}
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

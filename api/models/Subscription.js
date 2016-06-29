@@ -79,13 +79,13 @@ module.exports = class Subscription extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Subscription.hasOne(models.Customer, {
-                as: 'customer',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Subscription.belongsTo(models.Customer, {
+              //   as: 'customer',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -162,17 +162,50 @@ module.exports = class Subscription extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+
+      const database = app.config.database
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, // sub_xxxxxxxxxx
           primaryKey: true,
           unique: true
         },
-        plan: {
-          type: Sequelize.JSON
-        },
+        plan: sJSON('plan'),
 
-        // customer Model hasOne
+        // customer Model belongsTo
+        customer: {
+          type: Sequelize.STRING //null
+        },
 
         object: {
           type: Sequelize.STRING // "subscription"
@@ -210,15 +243,11 @@ module.exports = class Subscription extends Model {
         application_fee_percent: {
           type: Sequelize.FLOAT
         },
-        discount: {
-          type: Sequelize.JSON
-        },
+        discount: sJSON('discount'),
         tax_percent: {
           type: Sequelize.FLOAT
         },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        metadata: sJSON('metadata'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

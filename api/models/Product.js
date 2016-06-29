@@ -114,7 +114,54 @@ module.exports = class Product extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
-      const arrayType = Sequelize.ARRAY
+
+      const database = app.config.database
+
+      let sARRAY = () => {
+        return {
+          type: Sequelize.STRING
+        }
+      }
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+          sARRAY = () => {
+            return {
+              type: Sequelize.ARRAY
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+        sARRAY = () => {
+          return {
+            type: Sequelize.ARRAY
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"ba_16q4nxBw8aZ7QiYmwqM3lvdR"
@@ -145,27 +192,17 @@ module.exports = class Product extends Model {
         active: {
           type: Sequelize.BOOLEAN
         },
-        itemAttributes: {
-          type: arrayType(Sequelize.STRING)
-        },
+        itemAttributes: sARRAY(),
         shippable: {
           type: Sequelize.BOOLEAN
         },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        metadata: sJSON('metadata'),
         url: {
           type: Sequelize.STRING
         },
-        package_dimensions: {
-          type: Sequelize.JSON
-        },
-        images: {
-          type: arrayType(Sequelize.STRING)
-        },
-        skus: {
-          type: Sequelize.JSON //"object": "list","total_count": 0,"has_more": false,"url": "/v1/skus?product=prod_74DESReKhddEzB\u0026active=true","data": []
-        },
+        package_dimensions: sJSON('package_dimensions'),
+        images: sARRAY(),
+        skus: sJSON('skus'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {

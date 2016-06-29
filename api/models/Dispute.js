@@ -43,13 +43,13 @@ module.exports = class Dispute extends Model {
             //If you need associations, put them here
             associate: (models) => {
               //More information about associations here : http://docs.sequelizejs.com/en/latest/docs/associations/
-              models.Dispute.hasOne(models.Charge, {
-                as: 'charge',
-                onDelete: 'CASCADE',
-                foreignKey: {
-                  allowNull: false
-                }
-              })
+              // models.Dispute.belongsTo(models.Charge, {
+              //   as: 'charge',
+              //   onDelete: 'CASCADE',
+              //   foreignKey: {
+              //     allowNull: false
+              //   }
+              // })
             }
           }
         }
@@ -114,7 +114,54 @@ module.exports = class Dispute extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
-      const arrayType = Sequelize.ARRAY
+
+      const database = app.config.database
+
+      let sARRAY = () => {
+        return {
+          type: Sequelize.STRING
+        }
+      }
+
+      let sJSON = (field) =>{
+        return {
+          type: Sequelize.STRING,
+          get: function() {
+            return JSON.parse(this.getDataValue(field))
+          },
+          set: function(val) {
+            return this.setDataValue(field, JSON.stringify(val))
+          }
+        }
+      }
+
+      if (database.models[this.constructor.name.toLowerCase()]) {
+        if (database.stores[database.models[this.constructor.name.toLowerCase()].store].dialect == 'postgres') {
+          sJSON = (field) => {
+            return {
+              type: Sequelize.JSON
+            }
+          }
+          sARRAY = () => {
+            return {
+              type: Sequelize.ARRAY
+            }
+          }
+        }
+      }
+      else if (database.stores[database.models.defaultStore].dialect == 'postgres') {
+        sJSON = (field) => {
+          return {
+            type: Sequelize.JSON
+          }
+        }
+        sARRAY = () => {
+          return {
+            type: Sequelize.ARRAY
+          }
+        }
+      }
+
       schema = {
         id: {
           type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
@@ -122,7 +169,10 @@ module.exports = class Dispute extends Model {
           unique: true
         },
 
-        // charge Model hasOne
+        // charge Model belongsTo
+        charge: {
+          type: Sequelize.STRING //null
+        },
 
         amount: {
           type: Sequelize.INTEGER //1000
@@ -148,18 +198,10 @@ module.exports = class Dispute extends Model {
         is_charge_refundable: {
           type: Sequelize.BOOLEAN //false
         },
-        balance_transactions: {
-          type: arrayType(Sequelize.STRING)
-        },
-        evidence_details: {
-          type: Sequelize.JSON //{}
-        },
-        evidence: {
-          type: Sequelize.JSON //{}
-        },
-        metadata: {
-          type: Sequelize.JSON
-        },
+        balance_transactions: sARRAY(),
+        evidence_details: sJSON('evidence_details'),
+        evidence: sJSON('evidence'),
+        metadata: sJSON('metadata'),
 
         //Added to Model and doesn't exists in Stripe
         lastStripeEvent: {
