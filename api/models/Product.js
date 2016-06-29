@@ -85,7 +85,7 @@ module.exports = class Product extends Model {
         active: {
           type: 'boolean'
         },
-        attributes: {
+        itemAttributes: {
           type: 'array'
         },
         shippable: {
@@ -114,6 +114,7 @@ module.exports = class Product extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+      const arrayType = Sequelize.ARRAY
       schema = {
         id: {
           type: Sequelize.STRING, //"ba_16q4nxBw8aZ7QiYmwqM3lvdR"
@@ -144,8 +145,8 @@ module.exports = class Product extends Model {
         active: {
           type: Sequelize.BOOLEAN
         },
-        attributes: {
-          type: Sequelize.ARRAY
+        itemAttributes: {
+          type: arrayType(Sequelize.STRING)
         },
         shippable: {
           type: Sequelize.BOOLEAN
@@ -160,7 +161,7 @@ module.exports = class Product extends Model {
           type: Sequelize.JSON
         },
         images: {
-          type: Sequelize.ARRAY
+          type: arrayType(Sequelize.STRING)
         },
         skus: {
           type: Sequelize.JSON //"object": "list","total_count": 0,"has_more": false,"url": "/v1/skus?product=prod_74DESReKhddEzB\u0026active=true","data": []
