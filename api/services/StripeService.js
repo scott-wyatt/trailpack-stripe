@@ -71,29 +71,56 @@ module.exports = class StripeService extends Service {
   dbStripeEvent(model, stripeObject, cb){
     const crud = this.app.services.FootprintService
 
-    crud.find(model, {id: stripeObject.id}, { findOne: true })
-    .then(fModel => {
-      if (!fModel) {
-        return crud.create(model, stripeObject)
-      }
-      else if (fModel.lastStripeEvent > stripeObject.lastStripeEvent){
+    this.validateStripeEvent(stripeObject.id, (err, event) => {
+      if (err) {
         const err = new Error()
-        err.message = stripeObject.id,'is older than',fModel.id
-        return cb(err, fModel)
+        err.code = 'E_VALIDATION'
+        err.message = 'Event Not Found on Stripe'
+        return cb(err, stripeObject)
       }
-      else {
-        return fModel
-      }
+      crud.find(model, {id: stripeObject.id}, { findOne: true })
+      .then(fModel => {
+        if (!fModel) {
+          return crud.create(model, stripeObject)
+        }
+        else if (fModel.lastStripeEvent > stripeObject.lastStripeEvent){
+          const err = new Error()
+          err.message = stripeObject.id,'is older than',fModel.id
+          return cb(err, fModel)
+        }
+        else {
+          return fModel
+        }
+      })
+      .then(fModel => {
+        return crud.update(model, {id: fModel.id}, fModel)
+      })
+      .then(uModel => {
+        return cb(null, uModel[0])
+      })
+      .catch(cb)
     })
-    .then(fModel => {
-      return crud.update(model, {id: fModel.id}, fModel)
-    })
-    .then(uModel => {
-      return cb(null, uModel[0])
-    })
-    .catch(cb)
 
   }
+
+  /**
+   * Validate Stripe Event
+   * @param {String} id
+   * @param cb callback function
+   * @return null of err
+   */
+  validateStripeEvent(id, cb){
+    if (!this.app.config.stripe.validate) {
+      cb(null)
+    }
+    this.stripe.events.retrieve(id, function(err, event) {
+      if (err) {
+        return cb(err)
+      }
+      cb(null)
+    })
+  }
+
   /**
    * Validate and handle webhook from stripe
    * @param {String} type
