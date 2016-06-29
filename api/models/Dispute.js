@@ -62,6 +62,11 @@ module.exports = class Dispute extends Model {
     let schema = {}
     if (app.config.database.orm === 'waterline') {
       schema = {
+        id: {
+          type: 'string', //"evt_5zfGsQQRVg9T9N",
+          primaryKey: true,
+          unique: true
+        },
         charge: {
           model: 'Charge' //"ch_5mXfl1ok3CV6xn"
         },
@@ -110,6 +115,11 @@ module.exports = class Dispute extends Model {
     }
     else if (app.config.database.orm === 'sequelize') {
       schema = {
+        id: {
+          type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
+          primaryKey: true,
+          unique: true
+        },
 
         // charge Model hasOne
 

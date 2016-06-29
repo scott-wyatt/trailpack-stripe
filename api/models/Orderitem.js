@@ -56,6 +56,11 @@ module.exports = class Orderitem extends Model {
     let schema = {}
     if (app.config.database.orm === 'waterline') {
       schema = {
+        id: {
+          type: 'string', //"oritem_16q4o6Bw8aZ7QiYmxfWfodKl"
+          primaryKey: true,
+          unique: true
+        },
         parent: {
           type: 'string' //"sku_74DEICYJxo7XQF"
         },
@@ -86,6 +91,11 @@ module.exports = class Orderitem extends Model {
     }
     else if (app.config.database.orm === 'sequelize') {
       schema = {
+        id: {
+          type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
+          primaryKey: true,
+          unique: true
+        },
         parent: {
           type: Sequelize.STRING //"sku_74DEICYJxo7XQF"
         },
