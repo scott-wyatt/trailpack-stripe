@@ -15,19 +15,37 @@ module.exports = class StripeController extends Controller{
    * @param {Object} res
    */
   webhook(req, res) {
+    const StripeService = this.app.services.StripeService
 
-    this.app.services.StripeService.webhook(req, res, (err, event) => {
+    StripeService.webhook(req, res, (err, event) => {
       if (err) {
         if (err.code === 'E_VALIDATION') {
+          // Validation Error
           res.status(400).json({error: err.message || err})
         }
         else {
+          // Unreconciled Error
           this.app.log.error(err)
           res.serverError(err, req, res)
         }
       }
       else {
+
+        // Send Stripe a response right away so that it doesn't wait on the ORM
         res.json(event)
+
+        // Handle Stripe Event
+        if (!event.ignore) {
+
+          StripeService.handleStripeEvent(event.type, event.data.object, function(err, response){
+            if (err) {
+              this.app.log.error(err)
+            }
+            else {
+              this.app.log.debug(response)
+            }
+          })
+        }
       }
     })
   }

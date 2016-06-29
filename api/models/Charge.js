@@ -253,4 +253,145 @@ module.exports = class Charge extends Model {
     }
     return schema
   }
+
+  // Stripe Webhook charge.succeeded
+  stripeChargeSucceeded(charge, cb) {
+
+    Charge.findOrCreate(charge.id, charge)
+      .exec(function (err, foundCharge){
+        if (err) return cb(err)
+        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
+        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
+          return Charge.afterStripeChargeSucceeded(foundCharge, function(err, charge){
+            return cb(err, charge)
+          })
+        }
+        Charge.update(foundCharge.id, charge)
+        .exec(function(err, updatedCharges){
+          if (err) return cb(err)
+          if (!updatedCharges) return cb(null, null)
+          Charge.afterStripeChargeSucceeded(updatedCharges[0], function(err, charge){
+            cb(err, charge)
+          })
+        })
+      })
+  }
+
+  afterStripeChargeSucceeded(charge, next){
+    //Add somethings to do after a charge succeeds
+    next(null, charge)
+  }
+
+  // Stripe Webhook charge.failed
+  stripeChargeFailed(charge, cb) {
+
+    Charge.findOrCreate(charge.id, charge)
+      .exec(function (err, foundCharge){
+        if (err) return cb(err)
+        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
+        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
+          return Charge.afterStripeChargeFailed(foundCharge, function(err, charge){
+            return cb(err, charge)
+          })
+        }
+        Charge.update(foundCharge.id, charge)
+        .exec(function(err, updatedCharges){
+          if (err) return cb(err)
+          if (!updatedCharges) return cb(null, null)
+          Charge.afterStripeChargeFailed(updatedCharges[0], function(err, charge){
+            cb(err, charge)
+          })
+        })
+      })
+  }
+
+  afterStripeChargeFailed(charge, next){
+    //Add somethings to do after a charge succeeds
+    next(null, charge)
+  }
+
+  // Stripe Webhook charge.captured
+  stripeChargeCaptured(charge, cb) {
+
+    Charge.findOrCreate(charge.id, charge)
+      .exec(function (err, foundCharge){
+        if (err) return cb(err)
+        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
+        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
+          return Charge.afterStripeChargeCaptured(foundCharge, function(err, charge){
+            return cb(err, charge)
+          })
+        }
+        Charge.update(foundCharge.id, charge)
+        .exec(function(err, updatedCharges){
+          if (err) return cb(err)
+          if (!updatedCharges) return cb(null, null)
+          Charge.afterStripeChargeCaptured(updatedCharges[0], function(err, charge){
+            cb(err, charge)
+          })
+        })
+      })
+  }
+
+  afterStripeChargeCaptured(charge, next){
+    //Add somethings to do after a charge succeeds
+    next(null, charge)
+  }
+
+  // Stripe Webhook charge.updated
+  stripeChargeUpdated(charge, cb) {
+
+    Charge.findOrCreate(charge.id, charge)
+      .exec(function (err, foundCharge){
+        if (err) return cb(err)
+        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
+        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
+          return Charge.afterStripeChargeUpdated(foundCharge, function(err, charge){
+            return cb(err, charge)
+          })
+        }
+        Charge.update(foundCharge.id, charge)
+        .exec(function(err, updatedCharges){
+          if (err) return cb(err)
+          if (!updatedCharges) return cb(null, null)
+          Charge.afterStripeChargeUpdated(updatedCharges[0], function(err, charge){
+            cb(err, charge)
+          })
+        })
+      })
+  }
+
+  afterStripeChargeUpdated(charge, next){
+    //Add somethings to do after a charge succeeds
+    next(null, charge)
+  }
+
+  // Stripe Webhook charge.updated
+  stripeChargeRefunded(charge, cb) {
+
+    Charge.findOrCreate(charge.id, charge)
+      .exec(function (err, foundCharge){
+        if (err) return cb(err)
+        if (foundCharge.lastStripeEvent > charge.lastStripeEvent) return cb(null, foundCharge)
+        if (foundCharge.lastStripeEvent == charge.lastStripeEvent) {
+          return Charge.afterStripeChargeRefunded(foundCharge, function(err, charge){
+            return cb(err, charge)
+          })
+        }
+        Charge.update(foundCharge.id, charge)
+        .exec(function(err, updatedCharges){
+          if (err) return cb(err)
+          if (!updatedCharges) return cb(null, null)
+          Charge.afterStripeChargeRefunded(updatedCharges[0], function(err, charge){
+            cb(err, charge)
+          })
+        })
+      })
+  }
+
+  afterStripeChargeRefunded(charge, next){
+    //Add somethings to do after a charge succeeds
+    next(null, charge)
+  }
+
 }
