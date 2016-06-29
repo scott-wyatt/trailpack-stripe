@@ -141,6 +141,7 @@ module.exports = class Stripeaccount extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+      const arrayType = Sequelize.ARRAY
       schema = {
         id: {
           type: Sequelize.STRING, //"acct_xxxxxxxxxxxxxxx",
@@ -172,7 +173,7 @@ module.exports = class Stripeaccount extends Model {
           type: Sequelize.BOOLEAN
         },
         currencies_supported: {
-          type: Sequelize.ARRAY(Sequelize.STRING)
+          type: arrayType(Sequelize.STRING)
         },
         default_currency: {
           type: Sequelize.STRING

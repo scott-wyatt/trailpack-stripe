@@ -131,6 +131,7 @@ module.exports = class Order extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+      const arrayType = Sequelize.ARRAY
       schema = {
         id: {
           type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
@@ -165,10 +166,10 @@ module.exports = class Order extends Model {
           type: Sequelize.STRING //null
         },
         items: {
-          type: Sequelize.ARRAY(Sequelize.STRING)
+          type: arrayType(Sequelize.STRING)
         },
         shipping_methods: {
-          type: Sequelize.ARRAY(Sequelize.STRING)
+          type: arrayType(Sequelize.STRING)
         },
         selected_shipping_method: {
           type: Sequelize.STRING

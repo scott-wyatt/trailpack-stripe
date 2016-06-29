@@ -114,6 +114,7 @@ module.exports = class Dispute extends Model {
       }
     }
     else if (app.config.database.orm === 'sequelize') {
+      const arrayType = Sequelize.ARRAY
       schema = {
         id: {
           type: Sequelize.STRING, //"or_16q4o6Bw8aZ7QiYmxfWfodKl"
@@ -148,7 +149,7 @@ module.exports = class Dispute extends Model {
           type: Sequelize.BOOLEAN //false
         },
         balance_transactions: {
-          type: Sequelize.ARRAY(Sequelize.STRING)
+          type: arrayType(Sequelize.STRING)
         },
         evidence_details: {
           type: Sequelize.JSON //{}
