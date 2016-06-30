@@ -18,6 +18,11 @@ Makes call via Stripe API using a Stripe Service.
 
 Supports waterline and sequelize.
 
+### Why Store Models from Stripe?
+Stripe has a great API, but performing complex queries through it are not really possible.
+By storing events and models from Stripe, you get the ability to do complex queries and analytics.
+This also allows you to interact qucikly with an entry that you've just created instead of waiting for Stripe Webhooks.
+
 ## Install
 
 With yo:
