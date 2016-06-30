@@ -1,6 +1,6 @@
 {
   "name": "trailpack-stripe",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Stripe API Trailpack for Trails",
   "homepage": "http://trailsjs.io",
   "author": {
