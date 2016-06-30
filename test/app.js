@@ -55,7 +55,7 @@ const App = {
       }
     },
     stripe: {
-      public: 'test'
+      public: 'test',
       secret: 'test',
       validate: 'false'
     },

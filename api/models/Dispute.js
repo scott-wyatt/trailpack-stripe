@@ -1,5 +1,5 @@
 'use strict'
-
+/* eslint new-cap: ["error", { "capIsNewExceptions": ["ARRAY"] }] */
 const Model = require('trails-model')
 
 /**
