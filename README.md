@@ -7,7 +7,8 @@
 
 Stripe API Trailpack for Trails
 
-Handles and validates Stripe Webhooks.  It checks the time the webhooks were received and keeps the DB in sync.
+Handles and validates [Stripe Webhooks](https://stripe.com/docs/webhooks).  
+It checks the time the webhooks were received and keeps the DB in sync by adding a `lastStripeEvent` attribute to each event.
 
 Optionally, it can perform `Round Trip` validation of every Stripe webhook that hits the endpoint.
 
@@ -59,6 +60,35 @@ Then on Stripe
  Point webhook to <yourdomain>/stripe/webhook
  Enable whatever webhooks you desire
 
+```
+
+## Usage Examples
+Get a Full list of API calls [here](https://stripe.com/docs/api)
+
+```js
+var const StripeService = this.app.services.StripeService
+
+// Create a Customer
+StripeService.customers.create({
+  description: 'Customer for test@example.com',
+  source: "tok_189fGA2eZvKYlo2C3pWnuPIc" // obtained with Stripe.js
+}, (err, customer) => {
+  // asynchronously called
+  // Stripe will issue a webhook after this is called and add it to the database.
+  // However, you may wish to interact with the customer before the webhook is delivered
+  // In which case we can ignore the webhook by adding `lastStripeEvent` manually
+  customer.lastStripeEvent = new Date(customer.created * 1000)
+  this.app.services.FootprintService.create('Customer',customer)
+  
+})
+
+// Retreive a Customer
+StripeService.customers.retrieve(
+  "cus_8jZwX4LTADczc2",
+  (err, customer) => {
+    // asynchronously called
+  }
+)
 ```
 
 [npm-image]: https://img.shields.io/npm/v/trailpack-stripe.svg?style=flat-square
