@@ -144,7 +144,7 @@ module.exports = class Product extends Model {
           }
           sARRAY = () => {
             return {
-              type: Sequelize.ARRAY
+              type: Sequelize.ARRAY(Sequelize.STRING)
             }
           }
         }
@@ -157,7 +157,7 @@ module.exports = class Product extends Model {
         }
         sARRAY = () => {
           return {
-            type: Sequelize.ARRAY
+            type: Sequelize.ARRAY(Sequelize.STRING)
           }
         }
       }

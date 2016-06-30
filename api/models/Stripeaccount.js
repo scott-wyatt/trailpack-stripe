@@ -171,7 +171,7 @@ module.exports = class Stripeaccount extends Model {
           }
           sARRAY = () => {
             return {
-              type: Sequelize.ARRAY
+              type: Sequelize.ARRAY(Sequelize.STRING)
             }
           }
         }
@@ -184,7 +184,7 @@ module.exports = class Stripeaccount extends Model {
         }
         sARRAY = () => {
           return {
-            type: Sequelize.ARRAY
+            type: Sequelize.ARRAY(Sequelize.STRING)
           }
         }
       }

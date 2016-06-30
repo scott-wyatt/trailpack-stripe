@@ -8,7 +8,7 @@ const packs = [
   require('trailpack-core'),
   require('trailpack-router'),
   require('trailpack-express'),
-  require('../') // trailpack-passport
+  require('../') // trailpack-stripe
 ]
 
 const ORM = process.env.ORM || 'sequelize'
@@ -55,7 +55,9 @@ const App = {
       }
     },
     stripe: {
-      secret: 'test'
+      public: 'test'
+      secret: 'test',
+      validate: 'false'
     },
     main: {
       packs: packs

@@ -161,7 +161,7 @@ module.exports = class Order extends Model {
           }
           sARRAY = () => {
             return {
-              type: Sequelize.ARRAY
+              type: Sequelize.ARRAY(Sequelize.STRING)
             }
           }
         }
@@ -174,7 +174,7 @@ module.exports = class Order extends Model {
         }
         sARRAY = () => {
           return {
-            type: Sequelize.ARRAY
+            type: Sequelize.ARRAY(Sequelize.STRING)
           }
         }
       }
