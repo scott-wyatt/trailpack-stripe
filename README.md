@@ -1,6 +1,7 @@
 # trailpack-stripe
 
 [![NPM version][npm-image]][npm-url]
+[![NPM downloads][npm-download]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
@@ -98,6 +99,7 @@ StripeService.customers.retrieve(
 
 [npm-image]: https://img.shields.io/npm/v/trailpack-stripe.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/trailpack-stripe
+[npm-download]: https://img.shields.io/npm/dt/trailpack-stripe.svg
 [ci-image]: https://img.shields.io/travis/scott-wyatt/trailpack-stripe/master.svg?style=flat-square
 [ci-url]: https://travis-ci.org/scott-wyatt/trailpack-stripe
 [daviddm-image]: http://img.shields.io/david/scott-wyatt/trailpack-stripe.svg?style=flat-square
