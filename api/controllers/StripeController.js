@@ -5,12 +5,11 @@ const Controller = require('trails-controller')
 /**
  * @module StripeController
  * @description Stripe Controller for Stripe Models.
- * @help :: See http://links.sailsjs.org/docs/controllers
+ * @help :: See trails controllers
  */
 module.exports = class StripeController extends Controller{
   /**
    * Handle Events from Stripe Webhooks
-   *
    * @param {Object} req
    * @param {Object} res
    */

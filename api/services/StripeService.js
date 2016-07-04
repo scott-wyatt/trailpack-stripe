@@ -42,7 +42,6 @@ module.exports = class StripeService extends Service {
 
     // Try and Find the Event in the DB
     crud.find('Event', {id: params.id}, { findOne: true })
-    //Event.findOne(params.id)
     .then(event => {
       if (event) {
         // Tell handleStripeEvent to ignore this since it already exsits
@@ -50,7 +49,7 @@ module.exports = class StripeService extends Service {
         return next(null, params)
       }
 
-      // Create the Event in the DB
+      // Create the new Event in the DB
       return crud.create('Event', params)
     })
     .then(event => {
