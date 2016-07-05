@@ -20,9 +20,9 @@ Makes call via Stripe API using a Stripe Service.
 ### Supported ORMs
 | Repo          |  Build Status (edge)                  |
 |---------------|---------------------------------------|
-| [trailpack-waterline](https://github.com/trailsjs/trailpack-waterline) | |
-| [trailpack-sequelize](https://github.com/trailsjs/trailpack-sequelize) | |
-| [trailpack-js-data](https://github.com/scott-wyatt/trailpack-js-data) | |
+| [trailpack-waterline](https://github.com/trailsjs/trailpack-waterline) | [![Build status][ci-waterline-image]][ci-waterline-url] |
+| [trailpack-sequelize](https://github.com/trailsjs/trailpack-sequelize) | [![Build status][ci-sequelize-image]][ci-sequelize-url] |
+| [trailpack-js-data](https://github.com/scott-wyatt/trailpack-js-data) | [![Build status][ci-jsdata-image]][ci-jsdata-url] |
 
 Don't see your ORM here? Make a PR!
 
@@ -114,3 +114,9 @@ StripeService.customers.retrieve(
 [codeclimate-image]: https://img.shields.io/codeclimate/github/scott-wyatt/trailpack-stripe.svg?style=flat-square
 [codeclimate-url]: https://codeclimate.com/github/scott-wyatt/trailpack-stripe
 
+[ci-waterline-image]: https://img.shields.io/travis/trailsjs/trailpack-waterline/master.svg?style=flat-square
+[ci-waterline-url]: https://travis-ci.org/trailsjs/trailpack-waterline
+[ci-sequelize-image]: https://img.shields.io/travis/trailsjs/trailpack-sequelize/master.svg?style=flat-square
+[ci-sequelize-url]: https://travis-ci.org/trailsjs/trailpack-sequelize
+[ci-jsdata-image]: https://img.shields.io/travis/scott-wyatt/trailpack-js-data/master.svg?style=flat-square
+[ci-jsdata-url]: https://travis-ci.org/scott-wyatt/trailpack-js-data
