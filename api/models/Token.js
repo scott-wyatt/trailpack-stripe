@@ -11,7 +11,7 @@ module.exports = class Token extends Model {
   static config (app) {
     let config = {}
 
-    if (app && app.config.database.orm === 'waterline') {
+    if (app && (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data')) {
       config = {
         /**
          * Callback to be run before validating from Stripe.

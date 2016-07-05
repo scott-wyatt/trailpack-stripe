@@ -26,7 +26,7 @@ else if (ORM === 'js-data') {
   packs.push(require('trailpack-js-data'))
   stores.sqlitedev = {
     database: 'dev',
-    storage: './.tmp/dev.sqlite',
+    storage: './.tmp/jsdata.sqlite',
     host: '127.0.0.1',
     dialect: 'sqlite'
   }
@@ -35,7 +35,7 @@ else if (ORM === 'sequelize') {
   packs.push(require('trailpack-sequelize'))
   stores.sqlitedev = {
     database: 'dev',
-    storage: './.tmp/dev.sqlite',
+    storage: './.tmp/sequelize.sqlite',
     host: '127.0.0.1',
     dialect: 'sqlite'
   }
