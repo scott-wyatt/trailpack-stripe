@@ -17,7 +17,7 @@ Stores Stripe event models with lifecyle handler for after a Stripe event occurs
 
 Makes call via Stripe API using a Stripe Service.
 
-Supports waterline and sequelize.
+Supports [trailpack-waterline](https://github.com/trailsjs/trailpack-waterline), [trailpack-sequelize](https://github.com/trailsjs/trailpack-sequelize), and [trailpack-js-data](https://github.com/scott-wyatt/trailpack-js-data) as ORMs.
 
 ### Why Store Models from Stripe?
 Stripe has a great API, but performing complex queries through it are not really possible.
