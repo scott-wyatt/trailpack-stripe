@@ -54,7 +54,7 @@ module.exports = class Orderitem extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"oritem_16q4o6Bw8aZ7QiYmxfWfodKl"

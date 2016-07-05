@@ -60,7 +60,7 @@ module.exports = class Dispute extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"evt_5zfGsQQRVg9T9N",

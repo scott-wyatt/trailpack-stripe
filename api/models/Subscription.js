@@ -96,7 +96,7 @@ module.exports = class Subscription extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', // sub_xxxxxxxxxx

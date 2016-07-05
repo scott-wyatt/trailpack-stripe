@@ -54,7 +54,7 @@ module.exports = class Token extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"tok_16GhzzBw8aZ7QiYmauEtvWUU"

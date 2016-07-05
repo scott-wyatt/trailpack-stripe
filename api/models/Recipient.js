@@ -60,7 +60,7 @@ module.exports = class Recipient extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"rp_3Uh38RCOt3igvD"

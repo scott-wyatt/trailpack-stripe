@@ -61,7 +61,7 @@ module.exports = class Applicationfee extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"fee_5zu43QOh0tbSiC"

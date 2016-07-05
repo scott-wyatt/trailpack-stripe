@@ -31,12 +31,14 @@
     "eslint": "^3.0.0",
     "eslint-config-trails": "^1.0.6",
     "express": "^4.14.0",
+    "js-data-sql": "^0.11.17",
     "mocha": "^2.5.3",
     "sails-disk": "^0.10.10",
     "smokesignals": "^1.2.2",
     "sqlite3": "^3.1.4",
     "supertest": "^1.2.0",
     "trailpack-core": "^1.0.0",
+    "trailpack-js-data": "^0.0.1",
     "trailpack-express": "^1.0.6",
     "trailpack-router": "^1.0.7",
     "trailpack-sequelize": "^1.0.1",
@@ -44,8 +46,9 @@
     "trails": "^1.0.4"
   },
   "scripts": {
-    "test": "eslint . && npm run testWaterline && npm run testSequelize",
+    "test": "eslint . && npm run testWaterline && npm run testJSData && npm run testSequelize",
     "testWaterline": "export ORM=waterline;mocha",
+    "testJSData": "export ORM=js-data;mocha",
     "testSequelize": "export ORM=sequelize;mocha"
   },
   "engines": {

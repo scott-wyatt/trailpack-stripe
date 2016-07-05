@@ -60,7 +60,7 @@ module.exports = class Bitcoin extends Model {
 
   static schema (app, Sequelize) {
     let schema = {}
-    if (app.config.database.orm === 'waterline') {
+    if (app.config.database.orm === 'waterline' || app.config.database.orm === 'js-data') {
       schema = {
         id: {
           type: 'string', //"btcrcv_5zu4MpDCIGkHcC",

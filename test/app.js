@@ -22,6 +22,15 @@ const stores = {
 if (ORM === 'waterline') {
   packs.push(require('trailpack-waterline'))
 }
+else if (ORM === 'js-data') {
+  packs.push(require('trailpack-js-data'))
+  stores.sqlitedev = {
+    database: 'dev',
+    storage: './.tmp/dev.sqlite',
+    host: '127.0.0.1',
+    dialect: 'sqlite'
+  }
+}
 else if (ORM === 'sequelize') {
   packs.push(require('trailpack-sequelize'))
   stores.sqlitedev = {
