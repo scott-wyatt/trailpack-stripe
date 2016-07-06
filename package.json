@@ -41,7 +41,7 @@
     "trailpack-js-data": "^0.0.4",
     "trailpack-express": "^1.0.9",
     "trailpack-router": "^1.0.7",
-    "trailpack-sequelize": "^1.0.1",
+    "trailpack-sequelize": "^1.0.4",
     "trailpack-waterline": "^1.0.0-beta-1",
     "trails": "^1.0.4"
   },
