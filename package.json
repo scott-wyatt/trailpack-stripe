@@ -1,6 +1,6 @@
 {
   "name": "trailpack-stripe",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Stripe API Trailpack for Trails",
   "homepage": "http://trailsjs.io",
   "author": {
@@ -28,7 +28,7 @@
     "stripe": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^3.0.1",
+    "eslint": "^3.0.0",
     "eslint-config-trails": "^1.0.6",
     "express": "^4.14.0",
     "js-data-sql": "^0.11.17",
@@ -38,15 +38,15 @@
     "sqlite3": "^3.1.4",
     "supertest": "^1.2.0",
     "trailpack-core": "^1.0.0",
-    "trailpack-js-data": "^0.0.4",
-    "trailpack-express": "^1.0.9",
+    "trailpack-js-data": "^0.0.1",
+    "trailpack-express": "^1.0.6",
     "trailpack-router": "^1.0.7",
     "trailpack-sequelize": "^1.0.4",
     "trailpack-waterline": "^1.0.0-beta-1",
     "trails": "^1.0.4"
   },
   "scripts": {
-    "test": "eslint . && npm run testWaterline && npm run testSequelize",
+    "test": "eslint . && npm run testWaterline && npm run testSequelize && npm run testJSData",
     "testWaterline": "export ORM=waterline;mocha",
     "testSequelize": "export ORM=sequelize;mocha",
     "testJSData": "export ORM=js-data;mocha"

@@ -593,7 +593,7 @@ module.exports = class StripeService extends Service {
         return cb(null, 'OK')
       },
       'default': () => {
-        //As of this Generators creation all hooks are handled. So this may be a rouge attempt or you may have experimental features enabled from Stripe.
+        //As of this trailpack creation all hooks are handled. So this may be a rouge attempt or you may have experimental features enabled from Stripe.
         this.app.log.error('Unknown Operation')
         return cb(null, 'Unknown Operation')
       }
