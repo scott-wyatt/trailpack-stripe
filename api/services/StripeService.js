@@ -1,3 +1,4 @@
+/* eslint no-console: [0, { allow: ["log","warn", "error"] }] */
 'use strict'
 
 const Service = require('trails-service')
@@ -23,7 +24,6 @@ module.exports = class StripeService extends Service {
     const crud = this.app.services.FootprintService
     const params = req.body
     const eventDate = new Date(params.created * 1000)
-
     if (!params.data || !_.isObject(params.data)) {
       const err = new Error('E_VALIDATION')
       err.statusCode = 400
