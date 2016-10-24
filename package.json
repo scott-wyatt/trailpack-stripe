@@ -35,7 +35,7 @@
     "mocha": "^3.0.1",
     "sails-disk": "^0.10.10",
     "smokesignals": "^1.2.2",
-    "sqlite3": "^3.1.4",
+    "sqlite3": "^3.1.7",
     "supertest": "^2.0.0",
     "trailpack-core": "^1.0.0",
     "trailpack-js-data": "^0.0.5",
