@@ -21,7 +21,7 @@
     "joi": "^9.0.0",
     "lodash": "^4.13.1",
     "trailpack": "latest",
-    "trails-controller": "^1.0.0-beta-2",
+    "trails-controller": "^1.0.0",
     "trails-model": "^1.0.0-beta-2",
     "trails-policy": "^1.0.2",
     "trails-service": "^1.0.0-beta-2",
