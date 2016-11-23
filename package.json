@@ -43,7 +43,7 @@
     "trailpack-router": "^2.0.1",
     "trailpack-sequelize": "^1.0.5",
     "trailpack-waterline": "^1.0.0-beta-1",
-    "trails": "^1.0.4"
+    "trails": "^1.1.0"
   },
   "scripts": {
     "test": "eslint . && npm run testWaterline && npm run testSequelize && npm run testJSData",
