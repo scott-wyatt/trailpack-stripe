@@ -28,7 +28,7 @@
     "stripe": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^3.0.0",
+    "eslint": "^3.10.0",
     "eslint-config-trails": "^1.0.6",
     "express": "^4.14.0",
     "js-data-sql": "^0.11.17",
