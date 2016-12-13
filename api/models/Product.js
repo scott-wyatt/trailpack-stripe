@@ -1,6 +1,6 @@
 'use strict'
 /* eslint new-cap: ["error", { "capIsNewExceptions": ["ARRAY"] }] */
-const Model = require('trails-model')
+const Model = require('trails/model')
 
 /**
  * @module Product

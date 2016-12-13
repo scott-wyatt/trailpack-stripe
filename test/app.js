@@ -4,8 +4,6 @@ const smokesignals = require('smokesignals')
 const fs = require('fs')
 
 const packs = [
-  smokesignals.Trailpack,
-  require('trailpack-core'),
   require('trailpack-router'),
   require('trailpack-express'),
   require('../') // trailpack-stripe
