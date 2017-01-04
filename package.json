@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "joi": "^10.0.5",
-    "lodash": "^4.13.1",
+    "lodash": "^4.16.2",
     "trailpack": "v2-latest",
     "stripe": "^4.0.0"
   },
