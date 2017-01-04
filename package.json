@@ -21,7 +21,7 @@
     "joi": "^10.0.5",
     "lodash": "^4.13.1",
     "trailpack": "v2-latest",
-    "stripe": "^4.0.0"
+    "stripe": "^4.14.0"
   },
   "devDependencies": {
     "eslint": "^3.0.0",
